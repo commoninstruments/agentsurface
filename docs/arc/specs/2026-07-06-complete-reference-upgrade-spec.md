@@ -38,13 +38,18 @@ C precedes D so new pages link to stable canonical targets. The tooling-catalog 
 
 ## Workstream A — Sync Repairs
 
-1. **Re-path skill references** to the 7-kit `templates/` layout. Affected: `skills/surface/references/{authentication,api-surface,testing,mcp-servers,tool-design,error-handling,context-files}.md` (11+ files use flat `/templates/foo.ts` paths). Docs-side paths are already correct and are the source of truth.
+1. **Re-path skill references** to the 7-kit `templates/` layout. Do not work from an enumerated list — sweep with a case-insensitive, slash-optional grep and manually triage every hit not under one of the 7 kit subdirectories:
+   ```
+   rg -i '\btemplates/[a-z0-9._-]+\.(ts|yaml|json|md|txt|mdc)\b' skills/surface/references/ \
+     | grep -viE 'templates/(mcp-and-api|cli-and-evals|cookbook|discovery|data-retrievability|errors-and-auth|tools-and-orchestration)/'
+   ```
+   This must catch both citation styles: slash-prefixed detailed references (e.g. `/templates/oauth-client-credentials.ts`) AND bare "See also" bullets (e.g. `templates/jwt-validate.ts`), including uppercase names (`templates/AGENTS.md`, `templates/CLAUDE.md`, `templates/monorepo-AGENTS.md`). Known affected at minimum: authentication, api-surface, testing, mcp-servers, tool-design, error-handling, context-files, cli-design, discovery-aeo, multi-agent. Docs-side paths are already correct and are the source of truth. Acceptance: the sweep above returns zero hits; every cited template path exists on disk.
 2. **Create two referenced-but-missing templates**: `templates/errors-and-auth/rate-limit-headers.ts` (cited `references/error-handling.md:367`) and `templates/tools-and-orchestration/memory-bank.ts` (cited `references/multi-agent.md:225`).
 3. **Fix `disciplines/`**:
    - Remove/repoint the five phantom citations (an entire never-built reference layer): `eval-cookbook.md`, `metrics.md` (evaluation.md); `orchestration-cookbook.md` (orchestration.md); `retrieval-cookbook.md`, `chunking-guide.md` (retrievability.md) — **decision: point "See also" lines at real existing docs pages / skill references; do not author new files.**
    - Rename `disciplines/agent-evaluation.md` → `disciplines/readiness-auditing.md` (naming collision: `evaluation.md` = evaluating agent system behavior; `agent-evaluation.md` = the readiness audit loop).
    - Add a pointer from README/SKILL.md so the folder is no longer orphaned.
-4. **Writer-agent parity**: add transform agents for `tool-design` and `multi-agent` dimensions (the two gaps in the otherwise 1:1 score↔writer mapping), or explicitly document `agentic-patterns-writer` as owning both. Default: add the two agents.
+4. **Writer-agent parity**: add transform agents for `tool-design` and `multi-agent` dimensions (the two gaps in the otherwise 1:1 score↔writer mapping). Decided: author the two agents, modeled on the existing writer-agent format.
 
 ## Workstream E — Repo Credibility + Infrastructure
 
@@ -158,6 +163,5 @@ Ground truth established by live research 2026-07-06. One-off sweep:
 
 ## Open Questions
 
-- Whether `search_docs` (MCP) and `/api/search` should gain real full-text indexing (e.g. Orama over page bodies) or minimal contract fix only — decide during Workstream E by effort.
-- Whether the two new writer agents (tool-design, multi-agent) are worth authoring vs documenting agentic-patterns-writer ownership — decide during Workstream A.
+- `search_docs` (MCP) + `/api/search` indexing depth: **default is the minimal contract fix plus indexing page bodies via the shared helper, time-boxed to half a day**. Full Orama-style search is a follow-up only if the minimal fix proves inadequate — do not expand Workstream E beyond the time-box.
 - Post-July-28 MCP pass timing and scope (stateless core + extensions framework will touch protocols/mcp, mcp-servers section, mcp-apps page, templates).
