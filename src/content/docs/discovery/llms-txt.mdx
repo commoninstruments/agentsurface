@@ -1,6 +1,7 @@
 ---
 title: llms.txt
 description: The llms.txt specification for giving AI agents a curated, token-efficient index of your site
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -224,6 +225,14 @@ Submission to directories is optional. The primary value of `llms.txt` comes fro
 
 ## Adoption and Consumption
 
-As of early 2025, no major LLM provider has confirmed that `llms.txt` is consumed at inference time during web browsing or RAG retrieval. The confirmed value is in development tools: IDE extensions that index documentation, agents that fetch the file when starting a task, and internal RAG pipelines that use `llms-full.txt` for knowledge base construction.
+Be honest about who actually reads `llms.txt`. The evidence is that general-purpose crawlers and inference-time browsing do not use it:
 
-This may change. Several browser agents and web-augmented models have indicated `llms.txt` awareness in their system prompts. Publishing the file costs nothing and positions your site for adoption as the standard matures.
+- An Ahrefs study of ~137,000 sites found that roughly 28% publish an `llms.txt` file, but 97% of the valid files received **zero** requests during May 2026.
+- The major AI crawlers — GPTBot, ClaudeBot, PerplexityBot — skip `llms.txt` entirely.
+- Google's John Mueller compared `llms.txt` to the keywords meta tag, and Google's own AI-optimization guidance states that files like this are not needed or used for its systems.
+
+So `llms.txt` is not an answer-engine-optimization (AEO) strategy for a general site. Treat any claim that it improves visibility in AI Overviews or chatbot answers with skepticism.
+
+The genuine, confirmed value is narrow: **coding agents and IDE assistants — Cursor, Claude Code, and similar tools — fetch `llms.txt` on demand when indexing a documentation or developer-tool site.** That on-demand consumption during a developer's task is real, and it is the reason this site still ships an `llms.txt`.
+
+**Recommendation:** worth shipping for documentation and developer-tool sites — it is cheap to generate and there is real coding-agent consumption. Do not ship it expecting an AEO benefit on a general marketing or content site; there is no evidence it changes how answer engines see you.

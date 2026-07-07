@@ -1,6 +1,7 @@
 ---
 title: Observability and Instrumentation
 description: OpenTelemetry GenAI semantic conventions, trace export, Langfuse, Phoenix
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -18,11 +19,13 @@ Root span: llm.completion
 
 ---
 
-Agent observability is the ability to inspect what happened: which tools were called, in what order, with what arguments, and what did they return? Traces are the source of truth for debugging. Use OpenTelemetry GenAI semantic conventions to standardize instrumentation across providers, while pinning emitted convention versions because the GenAI conventions are still marked Development.
+Agent observability is the ability to inspect what happened: which tools were called, in what order, with what arguments, and what did they return? Traces are the source of truth for debugging. Use OpenTelemetry GenAI semantic conventions to standardize instrumentation across providers, but treat the conventions as a moving target: they remain Development (experimental) status with nothing stable, and as of mid-2026 they are unversioned, so record which convention snapshot you instrumented against and expect attribute names to shift.
 
 ## OpenTelemetry GenAI semantic conventions
 
-The spec (https://opentelemetry.io/docs/specs/semconv/gen-ai/) defines standard attributes for LLM and agent spans. Its current status is Development, so expect compatibility work before the conventions are marked stable.
+The GenAI conventions define standard attributes for LLM and agent spans. Their status is Development (experimental) — nothing in the GenAI set is stable or stabilizing yet.
+
+As of semantic-conventions v1.42.0 (2026-06-12), all `gen_ai.*` and `mcp.*` conventions moved out of the mainline spec into a dedicated repository, [open-telemetry/semantic-conventions-genai](https://github.com/open-telemetry/semantic-conventions-genai). The old opentelemetry.io gen-ai pages (`https://opentelemetry.io/docs/specs/semconv/gen-ai/`) are now redirect stubs. The new repository has zero tagged releases, so the GenAI conventions are currently unversioned — you cannot pin an emitted convention version; pin to a commit or snapshot instead. Mainline semantic-conventions v1.43.0 (2026-07-03) ships with no gen-ai content.
 
 ### Root span: LLM completion
 
@@ -349,7 +352,7 @@ Instrumentation template: `/templates/cli-and-evals/otel-genai-instrument.ts` �
 
 ## References
 
-- OpenTelemetry GenAI spec: https://opentelemetry.io/docs/specs/semconv/gen-ai/
+- OpenTelemetry GenAI conventions (dedicated repo, unversioned): https://github.com/open-telemetry/semantic-conventions-genai — the old `opentelemetry.io/docs/specs/semconv/gen-ai/` pages are redirect stubs
 - Langfuse: https://langfuse.com/
 - Arize Phoenix: https://arize.com/phoenix
 - Traceloop: https://www.traceloop.com/
