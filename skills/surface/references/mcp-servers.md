@@ -569,9 +569,9 @@ export default {
 ## Templates and tooling
 
 **Reference implementations:**
-- `/templates/mcp-server-ts-stdio.ts` — stdio server scaffold (local)
-- `/templates/mcp-server-ts-http.ts` — Streamable HTTP scaffold (Cloudflare Workers, Vercel)
-- `/templates/mcp-client-test.ts` — InMemoryTransport test harness
+- `/templates/mcp-and-api/mcp-server-ts-stdio.ts` — stdio server scaffold (local)
+- `/templates/mcp-and-api/mcp-server-ts-http.ts` — Streamable HTTP scaffold (Cloudflare Workers, Vercel)
+- `/templates/mcp-and-api/mcp-client-test.ts` — InMemoryTransport test harness
 
 **Libraries:**
 - `@modelcontextprotocol/sdk` — canonical TypeScript/Node.js SDK
@@ -605,5 +605,5 @@ export default {
 - `references/tool-design.md` — Tool description + Zod schema guide
 - `references/authentication.md` — OAuth 2.1 resource server patterns for remote MCP
 - `references/testing.md` — InMemoryTransport patterns and eval strategies
-- `templates/mcp-server-ts-stdio.ts` — Local stdio server scaffold
-- `templates/mcp-server-ts-http.ts` — Remote HTTP server scaffold
+- `templates/mcp-and-api/mcp-server-ts-stdio.ts` — Local stdio server scaffold
+- `templates/mcp-and-api/mcp-server-ts-http.ts` — Remote HTTP server scaffold

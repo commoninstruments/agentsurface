@@ -327,11 +327,11 @@ async function requestDelegatedToken(userJwt: string, agentJwt: string, audience
 
 ## Templates and tooling
 
-- `/templates/oauth-client-credentials.ts` — complete M2M flow with short-lived tokens.
-- `/templates/jwt-validate.ts` — jose-based token validation with JWKS caching.
-- `/templates/well-known-oauth-protected-resource.ts` — Next.js endpoint serving RFC 9728 protected-resource metadata.
-- `/templates/token-exchange.ts` — RFC 8693 token exchange implementation.
-- `/templates/dpop-header.ts` — DPoP proof signing for sender-constrained tokens.
+- `/templates/errors-and-auth/oauth-client-credentials.ts` — complete M2M flow with short-lived tokens.
+- `/templates/errors-and-auth/jwt-validate.ts` — jose-based token validation with JWKS caching.
+- `/templates/errors-and-auth/well-known-oauth-protected-resource.ts` — Next.js endpoint serving RFC 9728 protected-resource metadata.
+- `/templates/errors-and-auth/token-exchange.ts` — RFC 8693 token exchange implementation.
+- `/templates/errors-and-auth/dpop-header.ts` — DPoP proof signing for sender-constrained tokens.
 
 **Libraries:**
 - `jose` — JWT signing + validation, JWKS fetching, all platforms.
@@ -361,5 +361,5 @@ async function requestDelegatedToken(userJwt: string, agentJwt: string, audience
 - `docs/authentication/auth-md` — Agentic registration discovery and user-claim flows.
 - `references/mcp-servers.md` — Remote MCP auth and metadata.
 - `references/scoring-rubric.md#dimension-5-authentication` — Dimension 5 scoring.
-- `templates/oauth-client-credentials.ts` — M2M token flow.
-- `templates/jwt-validate.ts` — Token validation with JWKS.
+- `templates/errors-and-auth/oauth-client-credentials.ts` — M2M token flow.
+- `templates/errors-and-auth/jwt-validate.ts` — Token validation with JWKS.

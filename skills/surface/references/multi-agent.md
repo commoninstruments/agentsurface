@@ -216,13 +216,13 @@ When designing a multi-agent system:
 
 ## Templates and Tooling
 
-- `/templates/agent-card.json` — A2A AgentCard example.
-- `/templates/langgraph-supervisor.ts` — Supervisor pattern with typed state.
-- `/templates/langgraph-swarm.ts` — Swarm pattern (active agent routing).
-- `/templates/agents-sdk-handoff.ts` — Agent-as-tool handoff (OpenAI).
-- `/templates/subagent.md` — Claude Code subagent definition.
-- `/templates/durable-workflow.ts` — Inngest or Trigger.dev example.
-- `/templates/memory-bank.ts` — Vertex AI Memory Bank integration.
+- `/templates/mcp-and-api/agent-card.json` — A2A AgentCard example.
+- `/templates/tools-and-orchestration/langgraph-supervisor.ts` — Supervisor pattern with typed state.
+- `/templates/tools-and-orchestration/langgraph-swarm.ts` — Swarm pattern (active agent routing).
+- `/templates/tools-and-orchestration/agents-sdk-handoff.ts` — Agent-as-tool handoff (OpenAI).
+- `/templates/tools-and-orchestration/subagent.md` — Claude Code subagent definition.
+- `/templates/tools-and-orchestration/durable-workflow.ts` — Inngest or Trigger.dev example.
+- `/templates/tools-and-orchestration/memory-bank.ts` — Shared memory bank for handoffs (pluggable store, provenance, compaction).
 
 ## Citations
 
@@ -248,5 +248,5 @@ When designing a multi-agent system:
 - `references/context-files.md` — How to structure orchestrator context for clarity.
 - `references/testing.md` — Multi-step flow evaluation metrics (pass@k, pass^k).
 - `references/tool-design.md` — Tool naming and disambiguation for agents.
-- `templates/agent-card.json` — Example A2A AgentCard.
-- `templates/langgraph-supervisor.ts` — Runnable supervisor pattern.
+- `templates/mcp-and-api/agent-card.json` — Example A2A AgentCard.
+- `templates/tools-and-orchestration/langgraph-supervisor.ts` — Runnable supervisor pattern.

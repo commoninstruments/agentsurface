@@ -539,9 +539,9 @@ All three converge on: structured output + semantic exit codes + TTY detection +
 ## Templates and tooling
 
 **In this repo:**
-- `/templates/cli-envelope.ts` — Reusable CLI response type + helpers
-- `/templates/cli-ndjson.ts` — NDJSON streaming boilerplate
-- `/templates/cli-schema.ts` — Zod-based schema introspection template
+- `/templates/cli-and-evals/cli-envelope.ts` — Reusable CLI response type + helpers
+- `/templates/cli-and-evals/cli-ndjson.ts` — NDJSON streaming boilerplate
+- `/templates/cli-and-evals/cli-schema.ts` — Zod-based schema introspection template
 
 **Libraries (TypeScript):**
 - `commander` — Most popular. Mature, flexible, actively maintained.
@@ -586,8 +586,8 @@ All three converge on: structured output + semantic exit codes + TTY detection +
 ## See also
 
 - `docs/cli-design` — Full tutorial on agent-native CLI patterns
-- `templates/cli-envelope.ts` — Response envelope template
-- `templates/cli-ndjson.ts` — NDJSON streaming template
-- `templates/cli-schema.ts` — JSON Schema introspection template
+- `templates/cli-and-evals/cli-envelope.ts` — Response envelope template
+- `templates/cli-and-evals/cli-ndjson.ts` — NDJSON streaming template
+- `templates/cli-and-evals/cli-schema.ts` — JSON Schema introspection template
 - `references/error-handling.md` — Structured error responses work with CLI exit codes
 - `references/tool-design.md` — CLI commands are tools; same naming/description principles apply

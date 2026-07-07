@@ -200,11 +200,11 @@ Each package can override permission boundaries (e.g., API server can deploy, we
 
 ## Templates and tooling
 
-- `/templates/AGENTS.md` — universal baseline (80–150 lines).
-- `/templates/CLAUDE.md` — Claude override template.
-- `/templates/cursor-rules.mdc` — Cursor rule example.
-- `/templates/copilot-instructions.md` — GitHub Copilot template.
-- `/templates/monorepo-AGENTS.md` — per-package pattern for pnpm/turbo workspaces.
+- `/templates/discovery/AGENTS.md` — universal baseline (80–150 lines).
+- `/templates/discovery/CLAUDE.md` — Claude override template.
+- `/templates/discovery/cursor-rules.mdc` — Cursor rule example.
+- `/templates/discovery/copilot-instructions.md` — GitHub Copilot template.
+- `/templates/discovery/monorepo-AGENTS.md` — per-package pattern for pnpm/turbo workspaces.
 
 Tooling:
 - [agentskills.io](https://agentskills.io) — registry + validation.
@@ -306,6 +306,6 @@ This example is ~90 lines, command-first, boundary-explicit, and ready to ship.
 ## See also
 
 - `docs/context-files` (project-specific deep dive)
-- `templates/AGENTS.md`, `templates/CLAUDE.md` (starter files)
+- `templates/discovery/AGENTS.md`, `templates/discovery/CLAUDE.md` (starter files)
 - `references/multi-agent.md` (orchestrator context patterns)
 - `references/tool-design.md` (tool descriptions inform AGENTS.md examples)

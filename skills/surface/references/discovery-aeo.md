@@ -598,13 +598,13 @@ Built on MCP. Apps use MCP servers as transport layer for agent interaction. Com
 ## Templates and tooling
 
 **Templates:**
-- `/templates/llms.txt` — starter structure with sections
-- `/templates/llms-full.txt` — full docs template with token comment
-- `/templates/robots-ai.txt` — pre-filled robots.txt allowing major AI bots
-- `/templates/AGENTS.md` — hand-curated baseline structure
-- `/templates/json-ld-softwareapp.ts` — SoftwareApplication schema helper (Next.js)
-- `/templates/content-negotiation.ts` — markdown negotiation middleware (Next.js)
-- `/templates/agent-card.json` — A2A v1.0 RC card scaffold
+- `/templates/discovery/llms.txt` — starter structure with sections
+- `/templates/discovery/llms-full.txt` — full docs template with token comment
+- `/templates/discovery/robots-ai.txt` — pre-filled robots.txt allowing major AI bots
+- `/templates/discovery/AGENTS.md` — hand-curated baseline structure
+- `/templates/discovery/json-ld-softwareapp.ts` — SoftwareApplication schema helper (Next.js)
+- `/templates/discovery/content-negotiation.ts` — markdown negotiation middleware (Next.js)
+- `/templates/mcp-and-api/agent-card.json` — A2A v1.0 RC card scaffold
 - `/templates/discovery/api-catalog.json` — RFC 9727 API catalog scaffold
 - `/templates/mcp-and-api/mcp-server-card.json` — MCP Server Card scaffold
 - `/templates/discovery/agent-skills-index.json` — Agent Skills discovery index
@@ -641,6 +641,6 @@ Built on MCP. Apps use MCP servers as transport layer for agent interaction. Com
 ## See also
 
 - `docs/discovery` — Agent discovery workflows (in Fumadocs site)
-- `templates/llms.txt`, `templates/AGENTS.md`, `templates/json-ld-softwareapp.ts` — AEO templates
+- `templates/discovery/llms.txt`, `templates/discovery/AGENTS.md`, `templates/discovery/json-ld-softwareapp.ts` — AEO templates
 - `references/context-files.md` — Detailed AGENTS.md curation guide
 - `references/authentication.md` — OAuth 2.1 and .well-known/oauth-protected-resource

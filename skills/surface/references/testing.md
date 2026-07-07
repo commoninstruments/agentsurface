@@ -282,12 +282,12 @@ Cite Simon Willison + [arxiv 2506.08837](https://arxiv.org/abs/2506.08837) on de
 
 See `/templates/` in the surface skill:
 
-- `/templates/eval-braintrust.ts` — Braintrust dataset + eval harness
-- `/templates/eval-promptfoo.yaml` — red-team suite with prompt injection attacks
-- `/templates/eval-vitest-harness.ts` — Vitest + Zod for tool routing tests
-- `/templates/mcp-test-harness.ts` — InMemoryTransport fixture
-- `/templates/otel-genai-instrument.ts` — Traceloop/OpenLLMetry bootstrap
-- `/templates/red-team-suite.yaml` — Promptfoo adversarial configs
+- `/templates/cli-and-evals/eval-braintrust.ts` — Braintrust dataset + eval harness
+- `/templates/cli-and-evals/eval-promptfoo.yaml` — red-team suite with prompt injection attacks
+- `/templates/cli-and-evals/eval-vitest-harness.ts` — Vitest + Zod for tool routing tests
+- `/templates/cli-and-evals/mcp-test-harness.ts` — InMemoryTransport fixture
+- `/templates/cli-and-evals/otel-genai-instrument.ts` — Traceloop/OpenLLMetry bootstrap
+- `/templates/cli-and-evals/red-team-suite.yaml` — Promptfoo adversarial configs
 
 ## Citations
 
@@ -311,5 +311,5 @@ See `/templates/` in the surface skill:
 - [references/tool-design.md](/references/tool-design.md) — tool routing test patterns
 - [references/multi-agent.md](/references/multi-agent.md) — trajectory evals for multi-step flows
 - [references/context-files.md](/references/context-files.md) — testing context for agent SDKs
-- [templates/eval-braintrust.ts](/templates/eval-braintrust.ts)
-- [templates/mcp-test-harness.ts](/templates/mcp-test-harness.ts)
+- [templates/cli-and-evals/eval-braintrust.ts](/templates/cli-and-evals/eval-braintrust.ts)
+- [templates/cli-and-evals/mcp-test-harness.ts](/templates/cli-and-evals/mcp-test-harness.ts)

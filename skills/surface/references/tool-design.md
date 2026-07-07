@@ -411,8 +411,8 @@ All three adapters wrap the same handler and schema; only the frame changes.
 
 ## Templates and tooling
 
-- `/templates/tool-definition.ts` — Shared schema + cross-framework adapters (MCP, Vercel AI SDK, OpenAI Agents SDK)
-- `/templates/tool-registry.ts` — Registry pattern for managing >10 tools
+- `/templates/tools-and-orchestration/tool-definition.ts` — Shared schema + cross-framework adapters (MCP, Vercel AI SDK, OpenAI Agents SDK)
+- `/templates/tools-and-orchestration/tool-registry.ts` — Registry pattern for managing >10 tools
 - **Libraries:**
   - `zod` — Type-safe schema definition
   - `zod-to-json-schema` — Compile Zod to JSON Schema for OpenAI
@@ -436,4 +436,4 @@ All three adapters wrap the same handler and schema; only the frame changes.
 - `/references/mcp-servers.md` — MCP server implementation
 - `/references/error-handling.md` — RFC 9457 error patterns
 - `/references/testing.md` — Tool routing, parameter correctness evals
-- `/templates/tool-definition.ts` — Starter template with adapters
+- `/templates/tools-and-orchestration/tool-definition.ts` — Starter template with adapters

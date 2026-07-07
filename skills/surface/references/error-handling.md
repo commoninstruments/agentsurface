@@ -349,23 +349,23 @@ const result = await generateText({
 
 ## Templates and tooling
 
-### /templates/problem-details.ts
+### /templates/errors-and-auth/problem-details.ts
 Zod schema for RFC 9457 + agent extensions. Drop-in schema for API responses and CLI errors.
 
-### /templates/next-error-handler.ts
+### /templates/errors-and-auth/next-error-handler.ts
 Next.js App Router error boundary and API error middleware wrapper. Catches thrown errors, formats to RFC 9457, includes trace ID from `X-Request-ID`.
 
-### /templates/fastify-error-plugin.ts
+### /templates/errors-and-auth/fastify-error-plugin.ts
 Fastify plugin that wraps all route handlers, catches errors, returns RFC 9457 JSON with 500 → 503 mapping for retryable faults.
 
-### /templates/mcp-tool-error.ts
+### /templates/errors-and-auth/mcp-tool-error.ts
 MCP tool wrapper that catches sync/async errors and returns `{ isError: true, content: [...] }` with ProblemDetails JSON payload.
 
-### /templates/idempotency-middleware.ts
+### /templates/errors-and-auth/idempotency-middleware.ts
 Middleware for POST/PATCH/DELETE that deduplicates via Idempotency-Key header and in-memory cache (or Redis).
 
-### /templates/rate-limit-headers.ts
-Middleware that calculates and attaches `X-RateLimit-*` headers on every response based on token bucket or sliding window.
+### /templates/errors-and-auth/rate-limit-headers.ts
+Parse `RateLimit-*` and `Retry-After` headers (delta-seconds and HTTP-date), compute wait times, emit `RateLimit-*` headers server-side, and produce structured `{ retryable, waitMs, reason }` retry guidance an agent can act on.
 
 **Libraries (TypeScript/JavaScript):**
 - `@hapi/boom` — HTTP-friendly error factory
@@ -389,5 +389,5 @@ Middleware that calculates and attaches `X-RateLimit-*` headers on every respons
 - [docs/error-handling](/docs/error-handling) — Detailed error handling guide
 - [references/tool-design.md](/references/tool-design.md) — Tool-call error patterns
 - [references/api-surface.md](/references/api-surface.md) — Error schemas per operation
-- [templates/problem-details.ts](/templates/problem-details.ts) — Zod schema
-- [templates/next-error-handler.ts](/templates/next-error-handler.ts) — Next.js integration
+- [templates/errors-and-auth/problem-details.ts](/templates/errors-and-auth/problem-details.ts) — Zod schema
+- [templates/errors-and-auth/next-error-handler.ts](/templates/errors-and-auth/next-error-handler.ts) — Next.js integration
