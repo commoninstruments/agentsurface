@@ -1,6 +1,7 @@
 ---
 title: MCP in Next.js
 description: Integrating MCP servers with Next.js — both dev tooling and production domain servers
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -14,6 +15,8 @@ Two distinct Next.js-MCP patterns: next-devtools-mcp (dev environment tooling) a
 - Auto-discovery via .mcp.json works with Claude Desktop and Cursor
 
 Next.js and MCP intersect in two completely different ways that are easy to conflate. The first is `next-devtools-mcp`, a tool that exposes your Next.js development environment to AI assistants. The second is building your own domain-specific MCP server hosted inside a Next.js application using `mcp-handler`. Both are useful, but they serve entirely different purposes.
+
+The patterns below target Next.js 16 (App Router, Turbopack as the default bundler, Node 20+ floor) — the version this documentation site itself runs on.
 
 ## next-devtools-mcp: Dev Environment Tooling
 

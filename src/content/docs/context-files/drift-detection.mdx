@@ -44,7 +44,7 @@ See src/components/ # But moved to packages/web/components/
 ```markdown
 # AGENTS.md (outdated)
 
-Framework: Next.js 12 # But upgraded to Next.js 15
+Framework: Next.js 14 # But upgraded to Next.js 16
 Database: MySQL # But migrated to PostgreSQL
 ```
 
@@ -73,7 +73,7 @@ pnpm build # Last verified 2026-04-01 — STALE, verify soon
 
 Tech Stack (verified 2026-03-01):
 TypeScript # Last verified 2026-03-01
-Next.js 15 # Last verified 2026-04-10 — recently updated
+Next.js 16 # Last verified 2026-04-10 — recently updated
 PostgreSQL # Last verified 2026-02-15 — STALE, mark verified
 ```
 
@@ -265,7 +265,7 @@ EOF
 Update AGENTS.md immediately when:
 
 - Package manager changes (npm → pnpm)
-- Major version upgrades (Next.js 12 → 15)
+- Major version upgrades (Next.js 14 → 16)
 - File structure changes (src/ moved to lib/)
 - Command names change
 - Permission boundaries change
@@ -274,9 +274,9 @@ Update AGENTS.md immediately when:
 **Commit message pattern:**
 
 ```
-docs(AGENTS.md): Update Next.js version to 15
+docs(AGENTS.md): Update Next.js version to 16
 
-- Verified all dev commands work with Next.js 15
+- Verified all dev commands work with Next.js 16
 - Updated build output paths in CLAUDE.md
 - No breaking changes to existing commands
 ```
@@ -290,10 +290,10 @@ Remove sections that are no longer relevant:
 ```markdown
 ## Legacy Setup
 
-If using Node `` `<18` ``, install node-gyp separately:
+If using Node `` `<20` ``, install node-gyp separately:
 npm install -g node-gyp
 
-(Node `` `<18` `` no longer supported; .nvmrc enforces 18+)
+(Node `` `<20` `` no longer supported — Next.js 16 requires 20+; .nvmrc enforces 20+)
 ```
 
 **After:** Delete the section. Update instead:
@@ -301,7 +301,7 @@ npm install -g node-gyp
 ```markdown
 ## Requirements
 
-Node.js 18.12+. Enforced in .nvmrc.
+Node.js 20.12+. Enforced in .nvmrc.
 ```
 
 ## Tooling Integration

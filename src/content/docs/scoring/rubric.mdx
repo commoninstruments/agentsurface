@@ -187,7 +187,7 @@ This is the authoritative rubric for scoring. For each dimension, the 0/1/2/3 sc
 | **2** | Good retrieval infrastructure. Hybrid search (BM25+dense) with RRF fusion. Reranking (Cohere/Voyage) present. Chunking with >10% overlap. Basic eval metrics.                                                    | Hybrid pipeline: BM25+dense+RRF or Weaviate native. Reranking before generation. Chunk size/overlap documented >10%. RAGAS or MTEB eval present. Mid-tier embedding (Voyage 3, Cohere v4, BGE-M3).                                                                             |
 | **3** | Excellent system. Query planning agents + reflection. Metadata filtering + namespaces. Contextual Retrieval (Anthropic) or ColBERT. Knowledge graphs or agentic RAG. Drift detection. Comprehensive CI/CD evals. | Agentic retriever: query decomposition, multi-hop, reflection loops. Contextual embeddings or prepended summaries. ColBERT/ColPali or graph+vector hybrid. Metadata filters enforced. Embedding drift monitoring. RAGAS+custom metrics in CI/CD. LightRAG for complex domains. |
 
-**Key files to examine:** Embedding pipelines, vector DB clients, chunking logic, reranking setup, RAG frameworks (LangGraph, LlamaIndex), knowledge graph code (Neo4j, KuzuDB), eval scripts (RAGAS, MTEB).
+**Key files to examine:** Embedding pipelines, vector DB clients, chunking logic, reranking setup, RAG frameworks (LangGraph, LlamaIndex), knowledge graph code (Neo4j, Memgraph), eval scripts (RAGAS, MTEB).
 
 ---
 

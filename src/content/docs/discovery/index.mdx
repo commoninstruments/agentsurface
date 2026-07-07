@@ -11,6 +11,14 @@ Discovery covers public, web-facing signals that help agents find, read, cite, a
 - **Does not own:** repository/editor operating instructions; see [Context Files](/docs/context-files). MCP implementation details; see [MCP Servers](/docs/mcp-servers).
 - **Agent-ready means:** agents can find canonical docs and machine-readable contracts, retrieve token-efficient content, and respect explicit access policy.
 
+<Callout type="info">
+  Agent-readiness is becoming an externally measured property. Cloudflare's [Agent Readiness
+  score](https://isitagentready.com) (launched April 2026) grades any domain on many of the signals
+  this section covers — `robots.txt`, Markdown content negotiation, Content Signals, Web Bot Auth,
+  an RFC 9727 API Catalog, and MCP server cards. Treat it as a complementary independent checker to
+  run alongside your own audit.
+</Callout>
+
 ## Start Here
 
 - [llms.txt](/docs/discovery/llms-txt) — publish a compact index for agent retrieval.
