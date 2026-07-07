@@ -30,6 +30,23 @@ AGENTS.md is documented at [agents.md](https://agents.md). It is plain markdown 
 
 AGENTS.md is read by multiple coding-agent and IDE tools, including Claude Code, Cursor, Windsurf, Kilo, GitHub Copilot, Aider, Jules, Zed, Warp, and RooCode.
 
+## Discovery and Precedence
+
+Agents discover `AGENTS.md` by walking up the directory tree from the current working directory to the repository root. When multiple files exist, the one closest to the working directory wins:
+
+```
+repo-root/
+  AGENTS.md          ← applies to everything
+  src/
+    AGENTS.md        ← overrides root for src/ and below
+    auth/
+      AGENTS.md      ← overrides src/ for auth/ and below
+```
+
+This lets you set repository-wide defaults and override them for specific subsystems — the authentication module can carry stricter modification rules while test fixtures stay permissive. Keep nested files scoped to what genuinely differs; see [Monorepos](/docs/context-files/monorepos) for per-package patterns.
+
+The maximum file size is 32 KiB. Files larger than that may be truncated or ignored by some agents, which is another reason to keep the root file tight and push detail into nested files or linked docs.
+
 ## Structure
 
 ### 1. Project Purpose (1–3 sentences)
@@ -40,7 +57,7 @@ Why does this repo exist? What does it do?
 # AGENTS.md
 
 Monorepo for SaaS analytics platform. API server (Node/Fastify),
-Web (Next.js 15), shared type definitions. Handles time-series data
+Web (Next.js 16), shared type definitions. Handles time-series data
 ingestion, real-time dashboards, and user management.
 ```
 
@@ -84,7 +101,7 @@ API server (packages/api):
 
 Web (packages/web):
 
-- Next.js 15 + React 19
+- Next.js 16 + React 19
 - TailwindCSS + shadcn/ui
 - Components: src/components/
 - Pages: src/app/
@@ -216,12 +233,14 @@ Point to ADRs, architecture guides, runbooks, CONTRIBUTING guide.
 - **Acceptable**: Up to 370 lines (split if longer).
 - **Red flag**: >500 lines. Break into per-package files or link to deeper docs.
 
+Longer is not better. Research from ETH Zurich found that hand-curated `AGENTS.md` files improved agent task completion by roughly +4%, while LLM-generated files reduced it by roughly -2% at a +20% token cost. If you are over the line limit, the file probably contains a codebase overview or a style guide — both anti-patterns. Move style rules to lint config where they are enforced automatically, and write context files by hand.
+
 ## Example: TypeScript Monorepo
 
 ```markdown
 # AGENTS.md
 
-SaaS analytics platform: API (Fastify + Node), Web (Next.js 15), Shared types.
+SaaS analytics platform: API (Fastify + Node), Web (Next.js 16), Shared types.
 
 ## Quick Start
 

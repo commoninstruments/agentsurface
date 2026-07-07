@@ -177,6 +177,41 @@ file_ids: z.array(z.string().uuid()).max(50).optional()
   .describe('File IDs to include. Max 50 files.'),
 ```
 
+## Context Parameters vs Tool Parameters
+
+An input schema should contain only the domain inputs the agent legitimately decides. Authentication tokens, session-derived user IDs, and internal system identifiers are context the execution layer injects at runtime — they must never appear as tool parameters. Asking the agent to supply them invites hallucinated or leaked credentials and couples the tool contract to implementation details.
+
+```typescript
+// Bad — agent is responsible for auth context it should never handle
+{
+  name: "create_document",
+  schema: {
+    properties: {
+      auth_token: { type: "string" },      // Wrong — execution layer concern
+      user_id: { type: "string" },         // Wrong — comes from session
+      organization_id: { type: "string" }, // Wrong — comes from session
+      title: { type: "string" },
+      content: { type: "string" }
+    }
+  }
+}
+
+// Good — only domain inputs; auth/session context injected at runtime
+{
+  name: "create_document",
+  schema: {
+    properties: {
+      title: { type: "string" },
+      content: { type: "string" },
+      folder_id: { type: "string", description: "Optional folder to place the document in" }
+    },
+    required: ["title"]
+  }
+}
+```
+
+Frameworks provide dedicated mechanisms for injecting this context outside the schema — LangChain's `InjectedToolArg`, an execute-context object, or a closure over the request. Keep the schema free of anything the session already knows.
+
 ## Output Schemas: Semantic Content
 
 Declare an `outputSchema` when the tool's result will be consumed by other tools or stored in agent state. This enables downstream agents to receive typed structured data.

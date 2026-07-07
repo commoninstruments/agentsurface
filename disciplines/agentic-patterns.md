@@ -81,7 +81,7 @@ Models learn from examples better than from descriptions.
 
 **When to use**: Whenever tool calls are complex or non-obvious.
 
-**See also**: `/docs/cookbook/system-prompt-as-config`, `/docs/api-surface/tool-definitions`
+**See also**: `/docs/cookbook/system-prompt-as-config`, `/docs/tool-design/naming-and-descriptions`
 
 ---
 

@@ -219,6 +219,136 @@ export const vercelTools = allTools.map((t) =>
 export const searchDocsTool = vercelTools.find((t) => t.name === "search_docs");
 ```
 
+## Adapters for Other Frameworks
+
+The same registry entry — name, description, schema, handler — projects onto every other runtime's native tool shape. The frameworks differ in surface syntax, not in the four fields.
+
+### LangChain
+
+LangChain uses the `@tool` decorator with Pydantic models. Context (auth, DB session) flows through `InjectedToolArg`, never through tool parameters.
+
+```python
+from langchain_core.tools import tool, InjectedToolArg
+from pydantic import BaseModel, Field
+from typing import Annotated
+
+class GetOrderInput(BaseModel):
+    order_id: str = Field(description="Order ID returned by list_orders or create_order")
+
+@tool("get_order", args_schema=GetOrderInput)
+def get_order(
+    order_id: str,
+    db_session: Annotated[Session, InjectedToolArg],  # injected at runtime
+) -> dict:
+    """Retrieves full details for a single order including line items and status.
+    Use when you have a specific order ID. For searching orders by customer or
+    date range, use search_orders instead."""
+    order = db_session.orders.get(order_id)
+    if not order:
+        raise ToolException(f"Order {order_id} not found")
+    return order.to_dict()
+```
+
+### Mastra
+
+Mastra's `createTool` takes Zod input/output schemas and a typed execute context, and carries MCP annotations under `mcp.annotations`.
+
+```typescript
+import { createTool } from "@mastra/core/tools";
+import { z } from "zod";
+
+export const getOrderTool = createTool({
+  id: "get-order",
+  description: `Retrieves full details for a single order. Use when you have a
+    specific order ID. For searching or listing orders, use search-orders instead.`,
+  inputSchema: z.object({
+    orderId: z.string().describe("Order ID from a prior list-orders or create-order call"),
+  }),
+  outputSchema: z.object({
+    id: z.string(),
+    status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled"]),
+    total: z.number(),
+  }),
+  mcp: { annotations: { readOnlyHint: true, idempotentHint: true } },
+  execute: async ({ context }) => fetchOrder(context.orderId),
+});
+```
+
+### CrewAI
+
+CrewAI assigns tools to agents through `agent.tools` rather than a central registry. Each tool subclasses `BaseTool`; the agent's `role`, `goal`, and `backstory` supply its operating context.
+
+```python
+from crewai import Agent
+from crewai_tools import BaseTool
+
+class GetOrderTool(BaseTool):
+    name: str = "get_order"
+    description: str = """Retrieves full details for a single order including line
+        items and shipping status. Use when you have an order ID."""
+
+    def _run(self, order_id: str) -> str:
+        return fetch_order(order_id).to_json()
+
+order_agent = Agent(
+    role="Order Manager",
+    goal="Help customers track and manage their orders accurately",
+    backstory="An expert in order fulfillment with access to the order system",
+    tools=[GetOrderTool()],
+)
+```
+
+### Semantic Kernel
+
+Semantic Kernel annotates class methods with `@kernel_function`, groups them into plugins, and injects services through dependency injection.
+
+```python
+from semantic_kernel.functions import kernel_function
+from typing import Annotated
+
+class OrderPlugin:
+    def __init__(self, order_service: OrderService):
+        self._order_service = order_service
+
+    @kernel_function(
+        name="get_order",
+        description="""Retrieves full details for a single order. Use when you have a
+            specific order ID. For searching orders, use search_orders instead.""",
+    )
+    async def get_order(
+        self, order_id: Annotated[str, "Order ID from list_orders or create_order"]
+    ) -> str:
+        order = await self._order_service.get(order_id)
+        return json.dumps(order.to_dict())
+```
+
+### Amazon Bedrock
+
+Bedrock accepts tools two ways. For Bedrock Agents, describe the entire API in OpenAPI 3.0 and upload it as an action group — see [OpenAPI for Agents](/docs/api-surface/openapi-for-agents) for spec design. For direct tool use in the Converse API, pass a `toolSpec` with an inline JSON input schema.
+
+```python
+tool_config = {
+    "tools": [
+        {
+            "toolSpec": {
+                "name": "get_order",
+                "description": """Retrieves full details for a single order. Use when
+                    you have a specific order ID. For searching orders, use search_orders.""",
+                "inputSchema": {
+                    "json": {
+                        "type": "object",
+                        "required": ["order_id"],
+                        "properties": {
+                            "order_id": {"type": "string", "description": "The order identifier"}
+                        },
+                    }
+                },
+            }
+        }
+    ]
+}
+```
+
 ## Handling Framework-Specific Features
 
 ### Annotations (MCP Only)

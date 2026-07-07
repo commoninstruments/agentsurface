@@ -18,6 +18,8 @@ Curate task-specific tool subsets from a centralized registry, not monolithic al
 
 An API might expose 100 endpoints. An agent should not see all 100 tools at once. Tool curation means curating a task-specific subset: read-only tools for auditors, mutation tools only for admins, a focused set for a specific workflow. This improves agent reasoning, reduces token cost, and enforces permission boundaries.
 
+Agent frameworks route tool calls by semantic similarity between the user's request and each tool's description, so every extra tool raises the chance of routing to the wrong one. OpenAI recommends fewer than 10 tools per agent session; selection accuracy degrades sharply past a hard ceiling of about 20. If your surface is larger than that, group, filter, and compose rather than exposing everything.
+
 ## Tool Registries
 
 A tool registry is a centralized collection of all available tools with metadata. The agent system queries the registry to build task-specific subsets.

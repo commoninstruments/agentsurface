@@ -193,6 +193,18 @@ The agent calls `preview_migration` first to show the human what will happen, th
 
 ## Tool Composition for Safety
 
+### Read Before Write
+
+When a write operation needs information the agent does not already hold, expose a paired read tool so the agent can gather the required IDs or current state before mutating. The write tool's description should name the read tool it depends on.
+
+```
+list_projects → create_task (requires project_id)
+get_user → update_user (requires current values to avoid overwriting)
+list_team_members → assign_task (requires assignee_id)
+```
+
+Making the dependency explicit in the description ("Requires a valid project_id from list_projects") is more reliable than expecting the agent to infer it from a bare `project_id: string` field.
+
 ### List Before Get
 
 Destructive tools often require a valid ID. Ensure the corresponding list operation exists:
