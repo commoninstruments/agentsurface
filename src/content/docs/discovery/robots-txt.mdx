@@ -1,7 +1,7 @@
 ---
 title: robots.txt for AI Agents
 description: Configuring robots.txt to control training crawler access while keeping retrieval bots enabled
-lastVerified: 2026-06-02
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -182,3 +182,5 @@ Understanding which AI bots are actually crawling your site helps you verify `ro
 If you see traffic from a bot not covered by your `robots.txt`, look up the bot's documentation to identify its user-agent string and add an appropriate directive.
 
 User-agent strings are trivially spoofable, so log-based verification only goes so far. Web Bot Auth is the emerging answer: signature-based verification that identifies bot traffic cryptographically rather than by user-agent, building on RFC 9421 HTTP Message Signatures so an accountable agent signs its requests and you verify them against a published key directory. Cloudflare has run it in production since March 2026 (folded into Verified Bots). It lets you admit known "good bots" while blocking automation that merely claims a friendly user-agent. See [Agent Identity](/docs/authentication/agent-identity) for how request signing fits the broader agent-authorization model.
+
+Crawler economics are shifting alongside verification. Cloudflare's pay-per-crawl experiment pivoted to "Pay Per Use" on 2026-07-01: publishers are compensated when their content is cited or appears in AI answers, rather than per crawl, with an x402-settled Monetization Gateway in waitlist. Blocking versus allowing AI bots is no longer purely a control decision — for some publishers it is becoming a pricing decision.
