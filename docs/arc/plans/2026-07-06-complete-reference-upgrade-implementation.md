@@ -5,6 +5,12 @@ Spec: `docs/arc/specs/2026-07-06-complete-reference-upgrade-spec.md` (approved)
 Branch: `main` (user-directed; no feature branch)
 Commit posture: one commit series per workstream, workstreams ordered A → E → B → C → D.
 
+## Execution Rules
+
+- **Strictly sequential by task order** regardless of `depends` — workstream order A→E→B→C→D is authoritative; `depends` captures intra-workstream prerequisites plus explicit cross-workstream ones.
+- **Sweep-task exception**: A2, B2, E2, B6b, and C2c are single uniform transformations (path re-pointing, ID substitution, version alignment, frontmatter stamping, link updates) verified by integrity checks or rg sweeps rather than enumerated file lists — their file counts are inherently unbounded and acceptable.
+- **Plan size**: 34 tasks (29 auto + 5 checkpoints) is inherent to a five-workstream program; mitigation is the workstream partitioning — each is an independently shippable, revertable commit series with its own checkpoint.
+
 ## Quality Gates (repo-adapted)
 
 This is a docs/content repo with no vitest. Gates per task:
@@ -155,7 +161,7 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
 <task id="E2" depends="E1" type="auto">
   <name>Version + naming alignment across packaging surfaces</name>
   <files>
-    <modify>package.json, .skill.yaml, .claude-plugin/plugin.json, src/app/mcp/route.ts, public/.well-known/mcp/server-card.json, INSTALL.md, CLAUDE.md, public/.well-known/agent-skills/index.json</modify>
+    <modify>package.json, .skill.yaml, .claude-plugin/plugin.json, src/app/mcp/route.ts, public/.well-known/mcp/server-card.json, INSTALL.md, CLAUDE.md, public/.well-known/agent-skills/index.json, README.md</modify>
   </files>
   <read_first>
     docs/arc/specs/2026-07-06-complete-reference-upgrade-spec.md (Workstream E.2, E.3)
@@ -168,7 +174,7 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
     (`/plugin install surface`). Unify install command to `npx skills add https://github.com/howells/agentsurface`
     everywhere. Fix README "Node.js 20+, pnpm 9" → "Node 24.15+, pnpm 11".
   </action>
-  <verify>rg '1\.0\.0|2\.0\.0' across packaging files returns only CHANGELOG history entries; rg '@anthropic/surface' returns nothing; install command identical in all three locations</verify>
+  <verify>rg '1\.0\.0|2\.0\.0' across packaging files returns only CHANGELOG history entries; rg '@anthropic/surface' returns nothing; install command identical in all three locations; rg 'Node\.js 20\+|pnpm 9' README.md returns nothing and rg 'Node 24\.15|pnpm 11' README.md matches</verify>
   <done>One version, one name, one install command, correct runtime claims</done>
   <commit>fix: align versions, naming, and install commands across packaging surfaces</commit>
 </task>
@@ -296,18 +302,18 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
     retirement executed 2026-06-15 (past tense); docs domain platform.claude.com. Mark press-only claims
     (session-hour pricing) as unverified or omit. Add lastVerified: 2026-07-06 frontmatter.
   </action>
-  <verify>No future-tense claims about past dates; every dated claim traceable to spec's verified facts; pnpm docs:check passes</verify>
+  <verify>rg -i 'scheduled for|will retire|upcoming' on the page returns no claims about pre-2026-07 dates; diff-review every dated claim against the spec's Workstream B.2 facts line-by-line; pnpm docs:check passes</verify>
   <done>Page reflects July 2026 platform state with freshness stamp</done>
   <commit>docs(agents): rewrite anthropic platform page for July 2026</commit>
 </task>
 
-<task id="B4" depends="" type="auto">
-  <name>Protocol and standards status updates</name>
+<task id="B4a" depends="" type="auto">
+  <name>Protocol status updates: MCP, A2A, ACP, comparison, emerging-standards</name>
   <files>
-    <modify>src/content/docs/protocols/{index,mcp,a2a,acp,comparison,emerging-standards}.mdx, src/content/docs/testing/{observability,promptfoo}.mdx, src/content/docs/discovery/llms-txt.mdx, src/content/docs/authentication/auth-md.mdx</modify>
+    <modify>src/content/docs/protocols/{index,mcp,a2a,acp,comparison,emerging-standards}.mdx</modify>
   </files>
   <read_first>
-    docs/arc/specs/2026-07-06-complete-reference-upgrade-spec.md (Workstream B.3 — all verified statuses)
+    docs/arc/specs/2026-07-06-complete-reference-upgrade-spec.md (Workstream B.3 — verified statuses)
     Each target page
   </read_first>
   <action>
@@ -315,15 +321,33 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
     hardening) with "follow-up pass scheduled post-release". A2A: v1.0.1, production, 150+ orgs, AAIF.
     ACP: three-way disambiguation (commerce: OpenAI+Stripe, NO Meta co-creator, Instant Checkout shut down
     2026-03, beta spec 2026-04-17, momentum→UCP; client: Zed/JetBrains protocol v1, ~50-agent registry;
-    IBM: dead, absorbed into A2A 2025-08). OTel GenAI: still Development; moved to unversioned
-    semantic-conventions-genai repo at semconv v1.42.0. llms.txt: Ahrefs 97%-zero-requests May 2026,
-    Google keywords-meta comparison; keep coding-agent niche as the honest value case. auth.md: emerging,
-    WorkOS-published adopters, no standards-body track. Promptfoo: acquisition announced 2026-03-09,
-    site banners "part of OpenAI", close unconfirmed, OSS active. lastVerified stamps on all touched pages.
+    IBM: dead, absorbed into A2A 2025-08). Status-only updates to emerging-standards (structural split is
+    C3's job). lastVerified stamps on all touched pages.
   </action>
-  <verify>Claims match spec's verified-facts inline; comparison.mdx maturity table consistent with per-protocol pages; pnpm docs:check passes</verify>
+  <verify>Every dated/status claim in the diff matches the spec's Workstream B.3 facts (diff-review each claim against the spec line); comparison.mdx maturity table consistent with per-protocol pages; pnpm docs:check passes</verify>
   <done>Protocol pages current to 2026-07-06 with stamps</done>
-  <commit>docs(protocols): update protocol and standards statuses to July 2026</commit>
+  <commit>docs(protocols): update MCP, A2A, ACP statuses to July 2026</commit>
+</task>
+
+<task id="B4b" depends="" type="auto">
+  <name>Standards status updates: OTel, llms.txt, auth.md, promptfoo</name>
+  <files>
+    <modify>src/content/docs/testing/{observability,promptfoo}.mdx, src/content/docs/discovery/llms-txt.mdx, src/content/docs/authentication/auth-md.mdx</modify>
+  </files>
+  <read_first>
+    docs/arc/specs/2026-07-06-complete-reference-upgrade-spec.md (Workstream B.3 — verified statuses)
+    Each target page
+  </read_first>
+  <action>
+    OTel GenAI: still Development; moved to unversioned semantic-conventions-genai repo at semconv v1.42.0.
+    llms.txt: Ahrefs 97%-zero-requests May 2026, Google keywords-meta comparison; keep coding-agent niche as
+    the honest value case. auth.md: emerging, WorkOS-published adopters, no standards-body track. Promptfoo:
+    acquisition announced 2026-03-09, site banners "part of OpenAI", close unconfirmed, OSS active.
+    lastVerified stamps on all touched pages.
+  </action>
+  <verify>Every dated/status claim in the diff matches the spec's Workstream B.3 facts (diff-review each claim against the spec line); pnpm docs:check passes</verify>
+  <done>Standards pages current to 2026-07-06 with stamps</done>
+  <commit>docs: update OTel, llms.txt, auth.md, promptfoo statuses to July 2026</commit>
 </task>
 
 <task id="B5" depends="" type="auto">
@@ -349,11 +373,10 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
   <commit>docs: refresh framework and tooling references to July 2026</commit>
 </task>
 
-<task id="B6" depends="B3,B4,B5" type="auto">
-  <name>lastVerified freshness system</name>
+<task id="B6a" depends="B3,B4a,B4b,B5" type="auto">
+  <name>Freshness system: schema, staleness check, UI render</name>
   <files>
     <modify>scripts/check-docs-integrity.mjs, source.config.ts (frontmatter schema if enforced), src/app/docs/[[...slug]]/page.tsx (render stamp)</modify>
-    <modify>Fast-decay pages lacking stamps: mcp-servers/real-world-examples.mdx, discovery/{well-known-endpoints,structured-data}.mdx, data-retrievability/{embeddings,multimodal-embeddings,vector-databases}.mdx, tooling-catalog/*.mdx, protocols/*.mdx (if not stamped in B4)</modify>
   </files>
   <read_first>
     scripts/check-docs-integrity.mjs (post-A1/B1 shape)
@@ -361,18 +384,36 @@ Deletions/merges: `error-handling/agent-extensions.mdx` (into rfc-9457), `api-su
     docs/arc/specs spec (Workstream B "The system")
   </read_first>
   <action>
-    Frontmatter lastVerified: YYYY-MM-DD on fast-decay pages (stamp with the date content was actually
-    verified: 2026-07-06 for pages touched this round, 2026-06-02 for data-retrievability's existing
-    review notes). Integrity check: pages carrying lastVerified fail when stamp exceeds 120 days; maintain
-    a FAST_DECAY list in the script requiring the field on named pages. Render "Last verified" in the docs
-    page UI near the title. Keep as separate check function.
+    Support frontmatter lastVerified: YYYY-MM-DD. Integrity check: pages carrying lastVerified fail when
+    stamp exceeds 120 days; maintain a FAST_DECAY list in the script requiring the field on named pages
+    (list from B6b's stamping targets). Render "Last verified" in the docs page UI near the title. Keep as
+    separate check function under the existing runner.
   </action>
-  <verify>node scripts/check-docs-integrity.mjs passes; artificially backdating a stamp to 2026-01-01 makes it fail; stamp visible on rendered page</verify>
-  <done>Freshness decay is mechanically detected; this is the last manual sweep</done>
-  <commit>feat(docs): lastVerified freshness stamps with staleness enforcement</commit>
+  <verify>Artificially backdating a stamp to 2026-01-01 makes the script fail; pages already stamped in B3/B4a/B4b render the stamp; pnpm build passes</verify>
+  <done>Freshness decay is mechanically detected and visible</done>
+  <commit>feat(docs): lastVerified staleness enforcement and stamp rendering</commit>
 </task>
 
-<task id="B7" depends="B1,B2,B3,B4,B5,B6" type="checkpoint:verify">
+<task id="B6b" depends="B6a" type="auto">
+  <name>Freshness system: stamp remaining fast-decay pages</name>
+  <files>
+    <modify>mcp-servers/real-world-examples.mdx, mcp-servers/nextjs-integration.mdx, discovery/{well-known-endpoints,structured-data,robots-txt}.mdx, data-retrievability/{embeddings,multimodal-embeddings,vector-databases,index}.mdx, tooling-catalog/*.mdx (all under src/content/docs/)</modify>
+  </files>
+  <read_first>
+    B6a's FAST_DECAY list
+    data-retrievability pages' existing "last reviewed" notes
+  </read_first>
+  <action>
+    Stamp with the date content was actually verified: 2026-07-06 for pages touched this round, 2026-06-02
+    for data-retrievability pages carrying existing review notes (convert the prose notes to frontmatter).
+    Purely additive frontmatter sweep — no content edits.
+  </action>
+  <verify>node scripts/check-docs-integrity.mjs passes with FAST_DECAY list fully populated; git diff shows frontmatter-only changes</verify>
+  <done>All fast-decay pages stamped; this is the last manual sweep</done>
+  <commit>docs: stamp fast-decay pages with lastVerified frontmatter</commit>
+</task>
+
+<task id="B7" depends="B1,B2,B3,B4a,B4b,B5,B6a,B6b" type="checkpoint:verify">
   <name>Workstream B checkpoint</name>
   <action>Present B results: integrity output (all checks green), models page, anthropic-platform rewrite, protocol updates summary. Run pnpm docs:check + build + lint.</action>
   <verify>User approves or describes issues</verify>
@@ -407,33 +448,69 @@ Dedup principle everywhere: canonical page owns the shared explanation; other ap
   <commit>refactor(docs): merge misfiled tool-definitions into tool-design; bridge discovery agents-md</commit>
 </task>
 
-<task id="C2" depends="C1" type="auto">
-  <name>Canonical elections: six dedup clusters</name>
+<task id="C2a" depends="C1" type="auto">
+  <name>Canonical elections: idempotency + dynamic tool selection</name>
   <files>
-    <modify>error-handling/{idempotency,rfc-9457,retry-patterns,errors-for-agents,meta.json}, authentication/{mcp-auth-model,idempotency-and-replay}, mcp-servers/{authentication,annotations,auto-generation}, tool-design/{tool-curation,idempotency-and-safety}, api-surface/openapi-extensions, cookbook/{semantic-tool-selection,tool-annotations}, multi-agent/tool-sprawl, getting-started.mdx, scoring/*.mdx (inbound links)</modify>
-    <delete>src/content/docs/error-handling/agent-extensions.mdx (merged into rfc-9457)</delete>
+    <modify>error-handling/{idempotency,retry-patterns}.mdx, authentication/idempotency-and-replay.mdx, tool-design/{idempotency-and-safety,tool-curation}.mdx, cookbook/semantic-tool-selection.mdx, multi-agent/tool-sprawl.mdx (all under src/content/docs/)</modify>
   </files>
   <read_first>
     docs/arc/specs spec (Workstream C.2 table — canonical/bridge assignments)
     Each cluster's pages before editing
   </read_first>
   <action>
-    Per spec table: idempotency mechanism → error-handling/idempotency canonical (auth keeps DPoP/jti,
-    tool-design keeps annotation semantics as bridges). MCP auth → authentication/mcp-auth-model canonical
-    (mcp-servers/authentication becomes practical overview + links). Dynamic tool selection →
-    tool-design/tool-curation canonical (cookbook keeps embedding recipe, tool-sprawl bridges). Tool
-    annotations → mcp-servers/annotations canonical (tool-design keeps safety-design framing). MCP-from-
-    OpenAPI → mcp-servers/auto-generation canonical (api-surface keeps extension mapping table). RFC 9457
-    extensions: merge agent-extensions.mdx content into rfc-9457.mdx, delete page, update
-    error-handling/meta.json AND all inbound prose links (getting-started, retry-patterns,
-    errors-for-agents, scoring/*).
+    Idempotency mechanism → error-handling/idempotency canonical (the shared Idempotency-Key/TTL
+    explanation lives only there; auth keeps DPoP/jti replay specifics as a bridge; tool-design keeps
+    annotation semantics; retry-patterns links instead of re-explaining keys). Dynamic tool selection →
+    tool-design/tool-curation canonical (cookbook keeps the embedding-technique recipe as a bridge;
+    tool-sprawl bridges with links).
   </action>
-  <verify>pnpm docs:check passes; rg 'agent-extensions' src/content/docs returns nothing; each cluster's shared explanation exists in exactly one place</verify>
-  <done>Six clusters deduped to canonical + bridges</done>
-  <commit>refactor(docs): elect canonical pages for six duplication clusters</commit>
+  <verify>pnpm docs:check passes; the shared idempotency-key explanation appears in exactly one page (grep 2-3 distinctive sentences from the current duplicated blocks — each must hit one file); same method for tool-selection blocks</verify>
+  <done>Two clusters deduped to canonical + bridges</done>
+  <commit>refactor(docs): canonical homes for idempotency and dynamic tool selection</commit>
 </task>
 
-<task id="C3" depends="C2" type="auto">
+<task id="C2b" depends="C2a" type="auto">
+  <name>Canonical elections: MCP auth, annotations, auto-generation</name>
+  <files>
+    <modify>authentication/mcp-auth-model.mdx, mcp-servers/{authentication,annotations,auto-generation}.mdx, tool-design/idempotency-and-safety.mdx, api-surface/openapi-extensions.mdx, cookbook/tool-annotations.mdx (all under src/content/docs/)</modify>
+  </files>
+  <read_first>
+    docs/arc/specs spec (Workstream C.2 table)
+    Each cluster's pages before editing
+  </read_first>
+  <action>
+    MCP auth → authentication/mcp-auth-model canonical (mcp-servers/authentication becomes practical
+    overview + links, keeps server-implementation specifics). Tool annotations → mcp-servers/annotations
+    canonical for MCP hint semantics (tool-design keeps safety-design framing; cookbook keeps the applied
+    registry pattern as a bridge). MCP-from-OpenAPI → mcp-servers/auto-generation canonical (api-surface
+    keeps its extension mapping table, drops the duplicated generator walkthrough).
+  </action>
+  <verify>pnpm docs:check passes; grep 2-3 distinctive sentences from each currently-duplicated block — each hits exactly one file</verify>
+  <done>Three MCP-adjacent clusters deduped</done>
+  <commit>refactor(docs): canonical homes for MCP auth, annotations, auto-generation</commit>
+</task>
+
+<task id="C2c" depends="C2b" type="auto">
+  <name>Merge RFC 9457 agent-extensions into rfc-9457; update inbound links</name>
+  <files>
+    <modify>error-handling/{rfc-9457,retry-patterns,errors-for-agents,meta.json}, getting-started.mdx, scoring/*.mdx (inbound links; all under src/content/docs/)</modify>
+    <delete>src/content/docs/error-handling/agent-extensions.mdx</delete>
+  </files>
+  <read_first>
+    error-handling/agent-extensions.mdx and rfc-9457.mdx (overlap map)
+    rg 'agent-extensions' src/content/docs (full inbound-link list)
+  </read_first>
+  <action>
+    Merge agent-extensions.mdx's unique content (anything not already in rfc-9457's extensions list) into
+    rfc-9457.mdx, delete the page, remove from error-handling/meta.json, and update every inbound prose
+    link found by the rg sweep (known: getting-started, retry-patterns, errors-for-agents, scoring/*).
+  </action>
+  <verify>pnpm docs:check passes; rg 'agent-extensions' src/content/docs returns nothing</verify>
+  <done>One canonical RFC 9457 page; no dangling references</done>
+  <commit>refactor(docs): merge agent-extensions into rfc-9457</commit>
+</task>
+
+<task id="C3" depends="C2c" type="auto">
   <name>Emerging-standards split, map renames, scored-vs-reference explainer</name>
   <files>
     <modify>src/content/docs/protocols/emerging-standards.mdx, src/content/docs/reference-links/{meta.json,index.mdx}, src/content/docs/tooling-catalog/capability-map.mdx, src/content/docs/scoring/index.mdx, src/content/docs/getting-started.mdx</modify>
@@ -455,12 +532,12 @@ Dedup principle everywhere: canonical page owns the shared explanation; other ap
     scored dimensions ↔ sections and naming reference-only sections (agents, agentic-ui, runtime-boundaries,
     cookbook, protocols, reference-links, tooling-catalog, scoring).
   </action>
-  <verify>pnpm docs:check passes; emerging-standards contains no full re-explanations of stable standards; both map pages cross-link</verify>
+  <verify>pnpm docs:check passes; grep 2-3 distinctive sentences from the removed stable-standard sections — each hits only its canonical home, not emerging-standards; both map pages cross-link</verify>
   <done>Watchlist is a watchlist; maps disambiguated; dimension model explained</done>
   <commit>refactor(docs): split emerging-standards, rename coverage audit, explain dimension model</commit>
 </task>
 
-<task id="C4" depends="C1,C2,C3" type="checkpoint:verify">
+<task id="C4" depends="C1,C2a,C2b,C2c,C3" type="checkpoint:verify">
   <name>Workstream C checkpoint</name>
   <action>Present C results: dedup summary (cluster → canonical), nav diffs, rubric-sync spot check (skills/surface/references/scoring-rubric.md ↔ docs/scoring/rubric.mdx still identical). Run pnpm docs:check + build + lint.</action>
   <verify>User approves or describes issues</verify>
@@ -522,7 +599,7 @@ House pattern for every new page: agent-facing problem in first 150 words → de
   <commit>docs(agents): add sandboxes and workspaces decision guidance</commit>
 </task>
 
-<task id="D3" depends="" type="auto">
+<task id="D3" depends="C3" type="auto">
   <name>agentic-ui: session-control + mcp-apps pages, index becomes router</name>
   <files>
     <create>src/content/docs/agentic-ui/session-control.mdx</create>
@@ -544,42 +621,76 @@ House pattern for every new page: agent-facing problem in first 150 words → de
     normalization, tool-UI lifecycle, security model; lastVerified + explicit "recheck after 2026-07-28"
     note. Reciprocal link from protocols/mcp.mdx. Index becomes router.
   </action>
-  <verify>pnpm docs:check passes; extraction verified; both pages house pattern; AG-UI mentioned in index with emerging-standards link</verify>
+  <verify>pnpm docs:check passes; grep 2-3 distinctive sentences from index's extracted steering/approval sections — each hits only session-control.mdx; both pages house pattern; AG-UI mentioned in index with emerging-standards link</verify>
   <done>agentic-ui is a real section (3 pages)</done>
   <commit>docs(agentic-ui): add session control and MCP Apps pages</commit>
 </task>
 
-<task id="D4" depends="" type="auto">
-  <name>agents/runtime-guardrails.mdx + code-execution + datasets pages</name>
+<task id="D4a" depends="" type="auto">
+  <name>agents/runtime-guardrails.mdx</name>
   <files>
     <create>src/content/docs/agents/runtime-guardrails.mdx</create>
-    <create>src/content/docs/cookbook/code-execution.mdx</create>
-    <create>src/content/docs/testing/datasets-and-experiments.mdx</create>
-    <modify>src/content/docs/{agents,cookbook,testing}/meta.json, src/content/docs/testing/{red-teaming,braintrust,ci-integration}.mdx (cross-links + experiment folds)</modify>
+    <modify>src/content/docs/agents/meta.json, src/content/docs/testing/red-teaming.mdx (cross-link)</modify>
   </files>
   <read_first>
-    src/content/docs/testing/{red-teaming,braintrust,ci-integration,evaluation-framework}.mdx (boundaries)
-    src/content/docs/cookbook/index.mdx (pattern format)
-    docs/arc/specs spec (Workstream D.4–D.6)
+    src/content/docs/testing/red-teaming.mdx (offense-side boundary)
+    src/content/docs/agents/design-principles.mdx (section voice)
+    docs/arc/specs spec (Workstream D.4)
   </read_first>
   <action>
-    runtime-guardrails.mdx: processor pipelines as runtime defense — input processors (PII detection,
-    prompt-injection detection, moderation), output processors (cost guards, token limiters, response
-    filtering), placement in the agent loop. Anchors: NeMo Guardrails, Guardrails AI, Bedrock Guardrails,
-    Azure AI Content Safety, Lakera; Mastra processors as one implementation. Cross-link red-teaming as
-    offense side. code-execution.mdx: agent writes orchestration code instead of chained tool calls — when
-    it wins (API breadth, token cost), when it's dangerous (sandbox required — link D2), "Code Mode" as
-    Cloudflare/Mastra term, Anthropic code-execution-with-MCP as parallel discovery, token figures
-    attributed as vendor benchmarks. datasets-and-experiments.mdx: golden-dataset curation methodology,
-    drift detection, labeling workflows — vendor-neutral; experiment-comparison specifics fold INTO
-    braintrust.mdx/ci-integration.mdx as small updates, linked not restated.
+    Processor pipelines as runtime defense — input processors (PII detection, prompt-injection detection,
+    moderation), output processors (cost guards, token limiters, response filtering), placement in the
+    agent loop. Anchors: NeMo Guardrails, Guardrails AI, Bedrock Guardrails, Azure AI Content Safety,
+    Lakera; Mastra processors as one implementation. Cross-link red-teaming as offense side.
   </action>
-  <verify>pnpm docs:check passes; three pages house pattern; datasets page contains no restated braintrust/ci material</verify>
-  <done>Guardrails, code execution, datasets covered without duplication</done>
-  <commit>docs: add runtime guardrails, code execution, and dataset curation guidance</commit>
+  <verify>pnpm docs:check passes; house pattern (problem in first 150 words, decision rule, failure modes, related links present)</verify>
+  <done>Runtime guardrails covered as defense-side counterpart to red-teaming</done>
+  <commit>docs(agents): add runtime guardrails guidance</commit>
 </task>
 
-<task id="D5" depends="" type="auto">
+<task id="D4b" depends="D2" type="auto">
+  <name>cookbook/code-execution.mdx</name>
+  <files>
+    <create>src/content/docs/cookbook/code-execution.mdx</create>
+    <modify>src/content/docs/cookbook/meta.json</modify>
+  </files>
+  <read_first>
+    src/content/docs/cookbook/index.mdx (pattern format)
+    src/content/docs/agents/sandboxes-and-workspaces.mdx (D2 output — sandbox link target)
+    docs/arc/specs spec (Workstream D.5)
+  </read_first>
+  <action>
+    Agent writes orchestration code instead of chained tool calls — when it wins (API breadth, token cost),
+    when it's dangerous (sandbox required — link the D2 page), "Code Mode" as the Cloudflare/Mastra term,
+    Anthropic code-execution-with-MCP as parallel discovery, token-savings figures attributed as vendor
+    benchmarks, not general results.
+  </action>
+  <verify>pnpm docs:check passes; house pattern; token claims carry vendor attribution</verify>
+  <done>Code-execution orchestration pattern covered vendor-neutrally</done>
+  <commit>docs(cookbook): add code-execution orchestration pattern</commit>
+</task>
+
+<task id="D4c" depends="" type="auto">
+  <name>testing/datasets-and-experiments.mdx + experiment folds</name>
+  <files>
+    <create>src/content/docs/testing/datasets-and-experiments.mdx</create>
+    <modify>src/content/docs/testing/{meta.json,braintrust.mdx,ci-integration.mdx}</modify>
+  </files>
+  <read_first>
+    src/content/docs/testing/{braintrust,ci-integration,evaluation-framework}.mdx (existing coverage — do not restate)
+    docs/arc/specs spec (Workstream D.6)
+  </read_first>
+  <action>
+    Sharp thesis: vendor-neutral golden-dataset curation methodology, drift detection, labeling workflows.
+    Experiment-comparison specifics (startExperiment-style lifecycles, diff views) fold INTO braintrust.mdx
+    and ci-integration.mdx as small updates, linked from the new page, not restated in it.
+  </action>
+  <verify>pnpm docs:check passes; house pattern; grep 2-3 distinctive sentences from braintrust/ci-integration's experiment sections — none appear in the new page</verify>
+  <done>Dataset curation covered without duplicating tool pages</done>
+  <commit>docs(testing): add dataset curation and experiments guidance</commit>
+</task>
+
+<task id="D5" depends="B4a,C3" type="auto">
   <name>Procedural memory + agentic commerce + distributed updates</name>
   <files>
     <modify>src/content/docs/multi-agent/memory-patterns.mdx, src/content/docs/authentication/agent-identity.mdx, src/content/docs/discovery/{robots-txt,well-known-endpoints}.mdx, src/content/docs/protocols/meta.json</modify>
@@ -626,7 +737,7 @@ House pattern for every new page: agent-facing problem in first 150 words → de
   <commit>docs(tooling-catalog): July 2026 row refresh</commit>
 </task>
 
-<task id="D7" depends="D1,D2,D3,D4,D5,D6" type="checkpoint:verify">
+<task id="D7" depends="D1,D2,D3,D4a,D4b,D4c,D5,D6" type="checkpoint:verify">
   <name>Workstream D checkpoint + whole-plan gate</name>
   <action>Run full gates (pnpm docs:check + build + lint). Present new-page list with one-line theses, extraction verification, nav structure. Then run plan-completion verification against this plan before closing.</action>
   <verify>User approves; plan-completion-reviewer passes</verify>
