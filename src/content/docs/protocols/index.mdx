@@ -1,6 +1,7 @@
 ---
 title: Protocols & Standards
 description: The protocol landscape for agent-to-service and agent-to-agent communication
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -17,9 +18,9 @@ Orchestrator (uses A2A)
        └── MCP → Specialist's tools
 ```
 
-- MCP 2025-11-25: tools, resources, prompts, async tasks
-- A2A v1.0: production-ready task delegation across organizational boundaries
-- ACP emerging: agent-initiated commerce with payment delegation
+- MCP 2025-11-25: tools, resources, prompts, async tasks (next revision `2026-07-28` in release candidate)
+- A2A v1.0.1: production-grade task delegation across organizational boundaries
+- ACP: an overloaded acronym — this section covers the Agentic Commerce Protocol (OpenAI + Stripe)
 - Publish: /.well-known/agent.json, /.well-known/acp.json, /AGENTS.md, /llms.txt
 - Transport: stdio (local), Streamable HTTP (remote)
 
@@ -27,11 +28,11 @@ These protocols and complementary standards define how agents discover capabilit
 
 ## Quick Start
 
-**Does your agent need tools?** → Use [MCP](/docs/protocols/mcp) (spec 2025-11-25). This is the baseline.
+**Does your agent need tools?** → Use [MCP](/docs/protocols/mcp) (spec 2025-11-25). This is the baseline. A larger revision (`2026-07-28`) is in release candidate; this guide tracks 2025-11-25 until it ships.
 
-**Multiple agents delegating work?** → Add [A2A](/docs/protocols/a2a) (v1.0) for peer-to-peer task delegation.
+**Multiple agents delegating work?** → Add [A2A](/docs/protocols/a2a) (v1.0.1) for peer-to-peer task delegation.
 
-**Agent initiating purchases?** → Add [ACP](/docs/protocols/acp) for commerce with payment boundaries.
+**Agent initiating purchases?** → Add [ACP](/docs/protocols/acp) for commerce with payment boundaries. Note that "ACP" is overloaded: the [ACP page](/docs/protocols/acp) covers the Agentic Commerce Protocol and disambiguates the two unrelated protocols that share the acronym.
 
 **Complex multi-step workflows?** → Use [Arazzo](/docs/protocols/comparison#arazzo--here-is-the-workflow-sequence) to choreograph API sequences.
 
@@ -39,15 +40,15 @@ These protocols and complementary standards define how agents discover capabilit
 
 ## The Protocols
 
-| Protocol                | Purpose                                  | Learn More                                               |
-| ----------------------- | ---------------------------------------- | -------------------------------------------------------- |
-| **MCP 2025-11-25**      | Agent-to-tool / agent-to-data (vertical) | [MCP docs](/docs/protocols/mcp)                          |
-| **A2A v1.0**            | Agent-to-agent delegation (horizontal)   | [A2A docs](/docs/protocols/a2a)                          |
-| **ACP emerging**        | Agent-initiated commerce                 | [ACP docs](/docs/protocols/acp)                          |
-| **Arazzo 1.1.0**        | Multi-step API workflow sequences        | [Comparison page](/docs/protocols/comparison)            |
-| **OpenTelemetry GenAI** | Observability & tracing                  | [Emerging standards](/docs/protocols/emerging-standards) |
-| **AGENTS.md**           | Agent context documentation              | [Emerging standards](/docs/protocols/emerging-standards) |
-| **llms.txt**            | LLM-friendly API docs                    | [Emerging standards](/docs/protocols/emerging-standards) |
+| Protocol                 | Purpose                                  | Learn More                                               |
+| ------------------------ | ---------------------------------------- | -------------------------------------------------------- |
+| **MCP 2025-11-25**       | Agent-to-tool / agent-to-data (vertical) | [MCP docs](/docs/protocols/mcp)                          |
+| **A2A v1.0.1**           | Agent-to-agent delegation (horizontal)   | [A2A docs](/docs/protocols/a2a)                          |
+| **ACP (commerce, beta)** | Agent-initiated commerce                 | [ACP docs](/docs/protocols/acp)                          |
+| **Arazzo 1.1.0**         | Multi-step API workflow sequences        | [Comparison page](/docs/protocols/comparison)            |
+| **OpenTelemetry GenAI**  | Observability & tracing                  | [Emerging standards](/docs/protocols/emerging-standards) |
+| **AGENTS.md**            | Agent context documentation              | [Emerging standards](/docs/protocols/emerging-standards) |
+| **llms.txt**             | LLM-friendly API docs                    | [Emerging standards](/docs/protocols/emerging-standards) |
 
 ## Architecture Pattern
 

@@ -1,6 +1,7 @@
 ---
 title: Model Context Protocol (MCP)
 description: Protocol for connecting AI agents to external tools, data sources, and services
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -19,16 +20,25 @@ Agent → connects via stdio/HTTP → MCP Server
 - Stateful JSON-RPC over stdio or HTTP
 - Authorization for protected HTTP servers via OAuth protected-resource metadata and authorization-server discovery
 - Server advertises capabilities; agent selects which to use
-- MCP Apps add interactive UI surfaces inside compatible AI clients
+- MCP Apps — the first official MCP extension (SEP-1865, Stable `2026-01-26`) — add interactive UI surfaces inside compatible clients (ChatGPT, Claude, VS Code, Goose, Postman)
 - Agent Skills complement MCP by packaging reusable instructions, scripts, references, and assets
 
 MCP is the protocol that connects AI models to the external world. It defines a standard wire format for an agent to discover what a server can do, call tools, read resources, use structured prompts, and execute long-running async tasks — all over a single stateful connection. Implement MCP first when you are exposing tools, data, or workflows to external agents.
 
 ## Origin and Governance
 
-Anthropic published the initial MCP specification in November 2024. Since then it has become the main cross-vendor protocol surface for connecting agents to tools, resources, prompts, and workflow primitives.
+Anthropic published the initial MCP specification in November 2024. Since then it has become the main cross-vendor protocol surface for connecting agents to tools, resources, prompts, and workflow primitives. Stewardship now sits with the **Agentic AI Foundation (AAIF)** under the Linux Foundation (founded 2025-12-09, with MCP, goose, and AGENTS.md as anchor projects); the MCP steering group persists under that umbrella.
 
 The current specification version is [`2025-11-25`](https://modelcontextprotocol.io/specification/2025-11-25/). This page covers that version.
+
+<Callout type="info">
+  A release candidate for revision `2026-07-28` — the largest change since MCP launched — is in
+  progress. It introduces a **stateless protocol core** (removing the `initialize` handshake and
+  `Mcp-Session-Id`), a **formal extensions framework**, OAuth 2.0 / OIDC hardening, a deprecation
+  lifecycle (12-month minimum), JSON Schema 2020-12 tool schemas, and W3C Trace Context. It lands
+  2026-07-28; this guide tracks `2025-11-25` and will be updated after the release. Do not build
+  against the moving RC.
+</Callout>
 
 ## Four Primitives
 

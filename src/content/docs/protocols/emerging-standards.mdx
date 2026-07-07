@@ -1,6 +1,7 @@
 ---
 title: Emerging Standards & Complementary Specs
 description: Arazzo workflows, OpenTelemetry GenAI semconv, AGENTS.md, llms.txt, JSON-LD, schema.org, and agent discovery standards
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -52,7 +53,7 @@ Use Arazzo when your API involves sequences that agents should follow predictabl
 
 ### OpenTelemetry GenAI Semantic Conventions (Development)
 
-OpenTelemetry's GenAI semantic conventions standardize how to instrument LLM calls and agentic workflows, but the current OpenTelemetry docs mark them Development. Metrics include request model, token counts, input/output content, system instructions, and tool call traces. Adoption by Traceloop, Langfuse, Datadog, and others makes this a practical observability baseline, but pin emitted versions and expect migration work before stable.
+OpenTelemetry's GenAI semantic conventions standardize how to instrument LLM calls and agentic workflows, but the current OpenTelemetry docs still mark them Development. As of semconv `v1.42.0` (2026-06-12) the GenAI conventions moved into a dedicated repository, `open-telemetry/semantic-conventions-genai`, which currently has **zero tagged releases** — the conventions are effectively unversioned. Metrics include request model, token counts, input/output content, system instructions, and tool call traces. Adoption by Traceloop, Langfuse, Datadog, and others makes this a practical observability baseline, but expect breaking changes and migration work before the conventions stabilize.
 
 Key attributes for agent spans:
 
@@ -273,7 +274,7 @@ NLWeb is tool-driven by teams at Microsoft and will be relevant for teams publis
 
 ## Practical Strategy
 
-**Adopt production-useful standards now.** Use AGENTS.md, llms.txt, schema.org JSON-LD, and Arazzo workflows. Use OpenTelemetry GenAI semconv for observability, but track emitted convention versions while the spec remains Development.
+**Adopt production-useful standards now.** Use AGENTS.md, llms.txt, schema.org JSON-LD, and Arazzo workflows. Use OpenTelemetry GenAI semconv for observability, but expect breaking changes: the conventions remain Development and are unversioned in their new `semantic-conventions-genai` repository.
 
 Given the fragmentation, three practices reduce migration risk:
 

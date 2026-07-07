@@ -1,6 +1,7 @@
 ---
 title: Protocol Comparison
 description: When to use MCP, A2A, ACP, ANP, Arazzo, and OASF — the full agent protocol landscape
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -10,11 +11,18 @@ Six protocols address different needs: MCP (tools/data), A2A (agent-to-agent), A
 | Protocol       | Purpose                | Maturity   | When                          |
 | -------------- | ---------------------- | ---------- | ----------------------------- |
 | MCP 2025-11-25 | Agent → tools/data     | Production | Every agent needs tools       |
-| A2A v1.0       | Agent → agent          | Production | Multi-agent delegation        |
-| ACP emerging   | Agent → merchant       | Emerging   | Agent initiates purchases     |
+| A2A v1.0.1     | Agent → agent          | Production | Multi-agent delegation        |
+| ACP (commerce) | Agent → merchant       | Beta       | Agent initiates purchases     |
 | OpenAPI 3.1    | Service APIs           | Production | Traditional API description   |
 | Arazzo 1.1.0   | Workflow sequences     | Mature     | Multi-step API choreography   |
 | ANP (draft)    | Decentralized identity | Draft      | Self-sovereign agent identity |
+
+<Callout type="warn">
+  "ACP" below refers to the **Agentic Commerce Protocol** (OpenAI + Stripe). The acronym is
+  overloaded — the unrelated **Agent Client Protocol** (Zed/JetBrains editor-to-agent standard, at
+  stable protocol version 1) and IBM's dead Agent Communication Protocol also used it. See the [ACP
+  page](/docs/protocols/acp) for the full disambiguation.
+</Callout>
 
 Six protocols have emerged to address different coordination problems in multi-agent systems. They are not competing alternatives — most production systems use several simultaneously. Understanding what each one is for determines which combination your system needs.
 
@@ -23,8 +31,8 @@ Six protocols have emerged to address different coordination problems in multi-a
 | Protocol           | Purpose                       | Topology                      | Transport                       | Auth                            | Discovery                       | Maturity   |
 | ------------------ | ----------------------------- | ----------------------------- | ------------------------------- | ------------------------------- | ------------------------------- | ---------- |
 | **MCP 2025-11-25** | Agent-to-tool / agent-to-data | Vertical (down)               | stdio, Streamable HTTP          | OAuth 2.1 (HTTP only)           | Via SDK config or introspection | Production |
-| **A2A v1.0**       | Agent-to-agent delegation     | Horizontal (peers)            | JSON-RPC over HTTPS             | OAuth 2.1 + DPoP                | `/.well-known/agent.json`       | Production |
-| **ACP emerging**   | Agent-initiated commerce      | Horizontal (agent → merchant) | HTTPS REST with SSE             | Bearer token + request signing  | `/.well-known/acp.json`         | Emerging   |
+| **A2A v1.0.1**     | Agent-to-agent delegation     | Horizontal (peers)            | JSON-RPC, gRPC, HTTP+JSON       | OAuth 2.1 + DPoP                | `/.well-known/agent.json`       | Production |
+| **ACP (commerce)** | Agent-initiated commerce      | Horizontal (agent → merchant) | HTTPS REST with SSE             | Bearer token + request signing  | `/.well-known/acp.json`         | Beta       |
 | **OpenAPI 3.1**    | Service API description       | Vertical (down)               | HTTPS REST / gRPC               | Flexible (OAuth, API key, etc.) | OpenAPI document                | Production |
 | **Arazzo 1.1.0**   | Multi-step workflow spec      | Vertical (down)               | HTTPS REST                      | Via OpenAPI binding             | Arazzo document                 | Mature     |
 | **ANP (draft)**    | Decentralized agent identity  | Any                           | Any (via DID service endpoints) | End-to-end encryption via DID   | DID resolution                  | Draft      |
@@ -45,7 +53,7 @@ Use MCP when:
 
 Many current agent frameworks support MCP. It is the baseline capability to evaluate when AI-enabled services need external tools or data. Streamable HTTP is the standard transport for remote non-stdio servers.
 
-### A2A v1.0 — Send This Task to the Specialist
+### A2A v1.0.1 — Send This Task to the Specialist
 
 A2A answers the question: which agent should handle this? It defines how one agent discovers a peer agent's capabilities, hands off a task with full context, and receives results back — including across organizational boundaries.
 
@@ -68,7 +76,7 @@ Use ACP when:
 - You need the payment boundary to be explicit and auditable (allowance-constrained authorization)
 - You need structured cancellation with intent tracing for audit or analytics
 
-ACP is a newer open commerce standard. It is appropriate for pilots and controlled production deployments where agent-initiated purchases need explicit payment boundaries.
+ACP (the Agentic Commerce Protocol, OpenAI + Stripe) is a Beta open commerce standard. It is appropriate for controlled pilots where agent-initiated purchases need explicit payment boundaries. Momentum has cooled since OpenAI shut down ChatGPT Instant Checkout in March 2026, with broader industry attention moving to Google's UCP; treat it as a narrowing pilot rather than a converging standard.
 
 ### Arazzo — Here Is the Workflow Sequence
 
@@ -146,14 +154,14 @@ No single protocol replaces the others. Each addresses a distinct coordination p
 
 ## Maturity Considerations
 
-| Protocol         | Use in production?     | Notes                                                               |
-| ---------------- | ---------------------- | ------------------------------------------------------------------- |
-| MCP `2025-11-25` | Yes                    | Stable spec, broad SDK support, and an official registry            |
-| A2A              | Yes                    | Stable spec, broad cloud support, and 150+ supporting organizations |
-| ACP              | Controlled deployments | Emerging standard, merchant support and tooling still maturing      |
-| Arazzo `1.1`     | Yes, with caveats      | Spec stable, tooling still maturing                                 |
-| ANP              | No                     | Draft spec, no production implementations                           |
-| OASF             | No                     | Early working group, schemas evolving                               |
+| Protocol         | Use in production? | Notes                                                                                  |
+| ---------------- | ------------------ | -------------------------------------------------------------------------------------- |
+| MCP `2025-11-25` | Yes                | Stable spec, broad SDK support, and an official registry (revision `2026-07-28` in RC) |
+| A2A `v1.0.1`     | Yes                | Production-grade — 150+ organizations, SDKs in five languages, multi-transport         |
+| ACP (commerce)   | Pilots only        | Beta; deflating after the March 2026 Instant Checkout shutdown, momentum → Google UCP  |
+| Arazzo `1.1`     | Yes, with caveats  | Spec stable, tooling still maturing                                                    |
+| ANP              | No                 | Draft spec, no production implementations                                              |
+| OASF             | No                 | Early working group, schemas evolving                                                  |
 
 When evaluating a protocol for production use, the spec stability matters less than SDK and tooling support. A stable spec with no SDKs requires you to implement the wire format yourself. MCP and A2A both have mature, actively maintained SDKs across multiple languages.
 
@@ -169,7 +177,7 @@ When evaluating a protocol for production use, the spec stability matters less t
 ## Spec References
 
 - [MCP 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/)
-- [A2A v1.0](https://a2a-protocol.org/latest/specification/)
+- [A2A v1.0.1](https://a2a-protocol.org/latest/specification/)
 - [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0)
 - [Arazzo 1.1.0](https://spec.openapis.org/arazzo/latest.html)
 

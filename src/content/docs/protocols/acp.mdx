@@ -1,11 +1,25 @@
 ---
 title: Agentic Commerce Protocol (ACP)
-description: Open commerce standard from Stripe, OpenAI, and Meta for transactions between AI agents, buyers, and merchants
+description: Open commerce standard from OpenAI and Stripe for transactions between AI agents, buyers, and merchants
+lastVerified: 2026-07-06
 ---
+
+<Callout type="warn">
+  **"ACP" is an overloaded acronym.** Three unrelated protocols have used it:
+
+1. **Agentic Commerce Protocol** (this page) — OpenAI + Stripe. Beta, latest spec `2026-04-17`.
+2. **Agent Client Protocol** — a Zed-originated standard for editor-to-agent communication, in its
+   own org (`agentclientprotocol`), Apache-2.0, at stable protocol version 1 and very active.
+   Adopters include Zed, JetBrains (natively), Neovim, and Emacs; a joint ACP Agent Registry
+   (January 2026) lists roughly 50 agents (Gemini CLI, a Claude Code adapter, Codex CLI, Copilot,
+   Goose). This is not a commerce protocol.
+3. **IBM ACP** (Agent Communication Protocol) — dead; absorbed into [A2A](/docs/protocols/a2a) in
+   August 2025.
+   </Callout>
 
 ## Summary
 
-ACP defines how agents complete purchases on behalf of users with explicit payment delegation boundaries. Merchants publish capabilities at `/.well-known/acp.json`; agents and merchants negotiate what is available before attempting any payment. It is an open standard created by Stripe, OpenAI, and Meta; current public spec assets live under `spec/2026-04-17`.
+ACP defines how agents complete purchases on behalf of users with explicit payment delegation boundaries. Merchants publish capabilities at `/.well-known/acp.json`; agents and merchants negotiate what is available before attempting any payment. It is an open standard created by OpenAI and Stripe; current public spec assets live under `spec/2026-04-17`.
 
 ```
 Agent → discovers capabilities → negotiates → pays → receipt
@@ -18,9 +32,18 @@ Buyer    (merchant declares      (what merchant  (from agent)
 - Protocol negotiates intersection before payment
 - Payment delegation: explicit boundaries, user can revoke
 - Supported methods: card, ACH, crypto_USDC
-- New and emerging; evaluate merchant support, tooling, and payment-risk controls before rollout
+- Still Beta; commerce momentum has shifted toward Google's UCP (see status note below)
 
-ACP defines how an AI agent completes a purchase on behalf of a user. It is an open standard from Stripe, OpenAI, and Meta, covering discovery, capability negotiation, payment delegation, and completion — from the first discovery request through the final receipt.
+ACP defines how an AI agent completes a purchase on behalf of a user. It is an open standard from OpenAI and Stripe, covering discovery, capability negotiation, payment delegation, and completion — from the first discovery request through the final receipt.
+
+<Callout type="warn">
+  **Status (July 2026): deflating.** OpenAI shut down ChatGPT Instant Checkout in March 2026 after
+  near-zero conversion; the flow is now discovery-in-ChatGPT with checkout completed on the
+  merchant's own site. Commerce momentum has shifted to Google's Universal Commerce Protocol (UCP) —
+  Amazon, Meta, Microsoft, Salesforce, and Stripe itself joined the UCP Tech Council on 2026-04-24.
+  ACP remains Beta (latest spec `2026-04-17`). Treat it as a narrowing pilot, not a converging
+  standard.
+</Callout>
 
 The problem ACP solves is not technical — HTTP and JSON are sufficient to call any payment API. The problem is behavioral: an agent acting autonomously on a user's behalf needs a protocol that makes the spending boundary explicit, verifiable, and revocable. ACP formalizes that boundary.
 
@@ -365,7 +388,7 @@ Generate idempotency keys from the conversation context — for example, a hash 
 
 ## When to Use ACP
 
-ACP is appropriate for controlled pilots and production deployments where agent-initiated commerce requires explicit payment boundaries and audit trails. Treat it as emerging: for mission-critical payments, evaluate current merchant support, tooling maturity, and your risk controls carefully.
+ACP is appropriate for controlled pilots where agent-initiated commerce requires explicit payment boundaries and audit trails. Treat it as Beta and deflating: after the March 2026 Instant Checkout shutdown, broader industry momentum has moved to Google's UCP. For mission-critical payments, evaluate current merchant support, tooling maturity, and your risk controls carefully, and weigh the foundation-backed alternatives before committing.
 
 ## Spec References
 

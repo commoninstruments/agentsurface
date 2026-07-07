@@ -1,11 +1,12 @@
 ---
 title: Agent-to-Agent Protocol (A2A)
 description: Vendor-neutral protocol for task delegation between AI agents across organizational boundaries
+lastVerified: 2026-07-06
 ---
 
 ## Summary
 
-A2A is horizontal (agent-to-agent) vs. MCP which is vertical (agent-to-tools). One agent discovers a peer's capabilities via AgentCard at `/.well-known/agent.json`, hands off a task with context, and receives results asynchronously. Works across organizational boundaries without pre-shared secrets. Spec: v1.0, governed by Linux Foundation AAIF.
+A2A is horizontal (agent-to-agent) vs. MCP which is vertical (agent-to-tools). One agent discovers a peer's capabilities via AgentCard at `/.well-known/agent.json`, hands off a task with context, and receives results asynchronously. Works across organizational boundaries without pre-shared secrets. Spec: v1.0.1 (2026-05-28; v1.0.0 shipped 2026-03-12), governed by the Linux Foundation AAIF.
 
 ```
 Orchestrator        Specialist
@@ -18,15 +19,18 @@ Orchestrator        Specialist
 
 - AgentCard: client publishes identity, public JWKS, capabilities at well-known location
 - Task-based: async, long-lived, with streaming/callback progress
-- OAuth 2.1 + DPoP for authentication between agents
+- OAuth 2.1 + DPoP for authentication between agents; Agent Cards can be cryptographically signed
 - Works across org boundaries, different infrastructure
-- v1.0: stable, production-ready, with broad cloud and enterprise support
+- Multi-transport: JSON-RPC, gRPC, and HTTP+JSON
+- v1.0.1: production-grade — 150+ organizations, SDKs in 5 languages, an 8-state task lifecycle
 
 A2A solves a different problem than MCP. Where MCP connects an agent to tools and data sources, A2A connects agents to other agents. It defines how one agent discovers a peer agent's capabilities, hands off a task with full context, and receives results back — across organizational and deployment boundaries.
 
 ## Origin and Governance
 
-Google initially developed and published the A2A specification in April 2025 as an open-source protocol for multi-agent coordination. In June 2025, governance transferred to the Linux Foundation's AI & Data Foundation (AAIF) alongside MCP, making A2A a vendor-neutral standard. Version 1.0 moved A2A from release-candidate tracking into production-relevant use. For current adopters and governance details, use the A2A project site rather than copying a vendor list into implementation docs.
+Google initially developed and published the A2A specification in April 2025 as an open-source protocol for multi-agent coordination. In June 2025 it joined the Linux Foundation, and it now sits under the Agentic AI Foundation (AAIF) alongside MCP, making A2A a vendor-neutral standard. The spec reached v1.0.0 on 2026-03-12 and v1.0.1 on 2026-05-28 — production-grade, with 150+ participating organizations and SDKs across five languages. For current adopters and governance details, use the A2A project site rather than copying a vendor list into implementation docs.
+
+IBM's separate "ACP" (Agent Communication Protocol) was absorbed into A2A in August 2025 and is dead as a standalone effort. See the [ACP page](/docs/protocols/acp) for the three unrelated protocols that share that acronym.
 
 ## Purpose
 
@@ -217,22 +221,25 @@ Content-Type: application/json
 
 ### Task States
 
-A task moves through a defined set of states:
+A task moves through a defined set of states. v1.0.1 specifies eight:
 
 ```
-submitted → working → (input-required →) completed
+submitted → working → (input-required / auth-required →) completed
                     ↘ failed
                     ↘ canceled
+                    ↘ rejected
 ```
 
-| State            | Meaning                                              |
-| ---------------- | ---------------------------------------------------- |
-| `submitted`      | Task received, queued for processing                 |
-| `working`        | Agent is actively processing                         |
-| `input-required` | Agent needs additional information before continuing |
-| `completed`      | Task finished successfully                           |
-| `failed`         | Task failed with an error                            |
-| `canceled`       | Task was canceled by the client or timed out         |
+| State            | Meaning                                                |
+| ---------------- | ------------------------------------------------------ |
+| `submitted`      | Task received, queued for processing                   |
+| `working`        | Agent is actively processing                           |
+| `input-required` | Agent needs additional information before continuing   |
+| `auth-required`  | Agent needs additional authorization before continuing |
+| `completed`      | Task finished successfully                             |
+| `failed`         | Task failed with an error                              |
+| `canceled`       | Task was canceled by the client or timed out           |
+| `rejected`       | Agent declined the task before starting work           |
 
 ### Streaming Responses
 
@@ -321,7 +328,7 @@ The `skills` array in an AgentCard describes discrete capabilities the agent exp
 
 ## Spec & References
 
-- [A2A v1.0 Specification](https://a2a-protocol.org/latest/specification/) — official A2A specification from the Linux Foundation
+- [A2A v1.0.1 Specification](https://a2a-protocol.org/latest/specification/) — official A2A specification from the Linux Foundation
 - [A2A Project Homepage](https://a2aproject.github.io/A2A/latest/) — documentation and resources
 
 ## Related Pages
