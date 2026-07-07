@@ -24,13 +24,13 @@ Agent Surface aims to be the definitive reference for agent-readable software an
 
 Five workstreams, each independently shippable and committable, in this order:
 
-| # | Workstream | Nature |
-|---|---|---|
-| A | Sync repairs (skill/templates/disciplines) | Mechanical |
-| E | Repo credibility + infrastructure | Mechanical-to-small |
-| B | Currency sweep + freshness system | Verification-heavy |
-| C | Reorg + dedup | Structural |
-| D | New 2026 coverage | Net-new writing |
+| #   | Workstream                                 | Nature              |
+| --- | ------------------------------------------ | ------------------- |
+| A   | Sync repairs (skill/templates/disciplines) | Mechanical          |
+| E   | Repo credibility + infrastructure          | Mechanical-to-small |
+| B   | Currency sweep + freshness system          | Verification-heavy  |
+| C   | Reorg + dedup                              | Structural          |
+| D   | New 2026 coverage                          | Net-new writing     |
 
 C precedes D so new pages link to stable canonical targets. The tooling-catalog row refresh lives in D; the map-page rename lives in C (rename-only, no conflict).
 
@@ -87,7 +87,8 @@ Ground truth established by live research 2026-07-06. One-off sweep:
 6. **Cite the competitive validator**: Cloudflare's Agent Readiness score (isitagentready.com, April 2026) checks robots, markdown negotiation, Content Signals, Web Bot Auth, MCP server cards, WebMCP, x402/UCP — reference it from discovery/scoring as independent validation of the category.
 
 **The system** (last manual sweep):
-- `lastVerified` frontmatter on fast-decay pages (anthropic-platform, protocols/*, promptfoo, nextjs-integration, real-world-examples, well-known-endpoints, robots-txt, structured-data, embeddings pages, tooling-catalog), surfaced in page UI.
+
+- `lastVerified` frontmatter on fast-decay pages (anthropic-platform, protocols/\*, promptfoo, nextjs-integration, real-world-examples, well-known-endpoints, robots-txt, structured-data, embeddings pages, tooling-catalog), surfaced in page UI.
 - Extend `scripts/check-docs-integrity.mjs` (today: internal-link validity + top-level meta.json bidirectional completeness only) with: (a) stale `lastVerified` threshold check; (b) template paths cited in docs **and** `skills/surface/references/` must exist on disk; (c) model IDs in examples must appear in the canonical list. Keep as separate check functions under the existing runner; split the script only when it outgrows this.
 
 ## Workstream C — Reorg + Dedup
@@ -117,7 +118,7 @@ Ground truth established by live research 2026-07-06. One-off sweep:
 1. **`runtime-boundaries/` 1 → 3 pages**:
    - `index.mdx` — becomes section router (extract existing background-worker and sandbox sections into the new leaves).
    - `durable-execution.mdx` — differentiator: the non-determinism-inside-durable-workflow problem for agent loops (LLM calls as activities, replay safety, checkpointing partial state, liveness signaling — Temporal heartbeats as one vendor's implementation). Anchors: Temporal, Inngest, AWS LangGraph+DynamoDB pattern, Cloudflare. Mid-run signal injection mechanics live here (workflow-primitive side).
-   - *(signals-and-steering as standalone page: dropped — split between this page and session-control.)*
+   - _(signals-and-steering as standalone page: dropped — split between this page and session-control.)_
 2. **`agents/sandboxes-and-workspaces.mdx`** (placed beside `browser-access.mdx`, its established counterpart) — sandbox provider landscape (E2B, Daytona, Modal, Vercel Sandbox GA, Cloudflare Sandbox/Containers GA, AgentCore), agent filesystems, LSP-backed inspection, workspace persistence. Cross-link from runtime-boundaries.
 3. **`agentic-ui/` 1 → 3 pages**:
    - `index.mdx` — router; extract "Correction And Steering"/"Approval States" into session-control.
@@ -140,18 +141,18 @@ Ground truth established by live research 2026-07-06. One-off sweep:
 
 ## Design Decisions
 
-| Decision | Rationale |
-|---|---|
-| Five workstreams, A→E→B→C→D | Mechanical wins first; C before D so new pages link to stable canonical targets |
-| Dedup = canonical + bridges, never wholesale merges | Preserves section-specific framing; validated by existing agents-md treatment |
-| Drop standalone signals-and-steering page | Would be a third overlap with agentic-ui steering + human-in-the-loop; mechanics split durable-execution/session-control |
-| Sandboxes page under `agents/` not `runtime-boundaries/` | Pairs with `browser-access.mdx`, the established conceptual counterpart |
-| Procedural memory, not observational | Observational already exists as type 4; procedural is the industry-converged gap |
-| Payments page covers foundation-backed protocols only | User direction: ignore branded protocols likely to die; UCP/AP2/x402 have governance + deployments |
-| Map pages renamed, not merged | Different audiences (self-audit vs tool index); reviewer blocker |
-| `llms.txt` becomes generated | A retrievability guide shouldn't hand-maintain its own index; matches llms-full.txt |
-| Disciplines phantom citations removed, not authored | Five never-built docs; pointing at real pages is proportionate |
-| Fresh follow-up pass scheduled for MCP 2026-07-28 | Largest spec revision since launch lands in 22 days; don't write against a moving RC except mcp-apps (RC-normalized paths already public) |
+| Decision                                                 | Rationale                                                                                                                                 |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Five workstreams, A→E→B→C→D                              | Mechanical wins first; C before D so new pages link to stable canonical targets                                                           |
+| Dedup = canonical + bridges, never wholesale merges      | Preserves section-specific framing; validated by existing agents-md treatment                                                             |
+| Drop standalone signals-and-steering page                | Would be a third overlap with agentic-ui steering + human-in-the-loop; mechanics split durable-execution/session-control                  |
+| Sandboxes page under `agents/` not `runtime-boundaries/` | Pairs with `browser-access.mdx`, the established conceptual counterpart                                                                   |
+| Procedural memory, not observational                     | Observational already exists as type 4; procedural is the industry-converged gap                                                          |
+| Payments page covers foundation-backed protocols only    | User direction: ignore branded protocols likely to die; UCP/AP2/x402 have governance + deployments                                        |
+| Map pages renamed, not merged                            | Different audiences (self-audit vs tool index); reviewer blocker                                                                          |
+| `llms.txt` becomes generated                             | A retrievability guide shouldn't hand-maintain its own index; matches llms-full.txt                                                       |
+| Disciplines phantom citations removed, not authored      | Five never-built docs; pointing at real pages is proportionate                                                                            |
+| Fresh follow-up pass scheduled for MCP 2026-07-28        | Largest spec revision since launch lands in 22 days; don't write against a moving RC except mcp-apps (RC-normalized paths already public) |
 
 ## Verification
 

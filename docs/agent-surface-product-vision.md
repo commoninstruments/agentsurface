@@ -48,14 +48,14 @@ That definition also prevents the project from collapsing into any one protocol 
 
 Software has historically grown new surfaces whenever a new class of user or intermediary became important:
 
-| Era / user class | Surface that emerged | Why it mattered |
-| --- | --- | --- |
-| Humans | GUI, navigation, interaction design | People needed to operate software directly. |
-| Developers | APIs, SDKs, reference docs | Other software needed programmable access. |
-| Search engines | SEO, sitemaps, structured data | Crawlers needed to discover and rank pages. |
-| Screen readers / assistive tech | Accessibility semantics, ARIA, WCAG | Interfaces needed to be perceivable and operable by more users. |
-| Operations teams | Logs, metrics, traces, health checks | Systems needed to be observable and debuggable. |
-| AI agents | Agent Surface | Agents need to discover, understand, act, recover, and be tested. |
+| Era / user class                | Surface that emerged                 | Why it mattered                                                   |
+| ------------------------------- | ------------------------------------ | ----------------------------------------------------------------- |
+| Humans                          | GUI, navigation, interaction design  | People needed to operate software directly.                       |
+| Developers                      | APIs, SDKs, reference docs           | Other software needed programmable access.                        |
+| Search engines                  | SEO, sitemaps, structured data       | Crawlers needed to discover and rank pages.                       |
+| Screen readers / assistive tech | Accessibility semantics, ARIA, WCAG  | Interfaces needed to be perceivable and operable by more users.   |
+| Operations teams                | Logs, metrics, traces, health checks | Systems needed to be observable and debuggable.                   |
+| AI agents                       | Agent Surface                        | Agents need to discover, understand, act, recover, and be tested. |
 
 The agent surface is currently under-designed. Teams often assume one of these is enough:
 
@@ -199,12 +199,12 @@ Possible labels:
 
 Possible levels:
 
-| Level | Meaning |
-| --- | --- |
-| Bronze | Agents can discover the product/repo and understand basic capabilities. |
-| Silver | Agents can perform read operations through structured interfaces with stable IDs and machine-readable errors. |
-| Gold | Agents can perform bounded write operations with dry-runs, idempotency, permissions, and recovery guidance. |
-| Platinum | Autonomous task completion is verified through evals, replayable traces, and documented operational limits. |
+| Level    | Meaning                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------- |
+| Bronze   | Agents can discover the product/repo and understand basic capabilities.                                       |
+| Silver   | Agents can perform read operations through structured interfaces with stable IDs and machine-readable errors. |
+| Gold     | Agents can perform bounded write operations with dry-runs, idempotency, permissions, and recovery guidance.   |
+| Platinum | Autonomous task completion is verified through evals, replayable traces, and documented operational limits.   |
 
 This should be evidence-based, not self-attested marketing. A badge is only valuable if it corresponds to a scorecard and verification artifacts.
 
@@ -324,24 +324,31 @@ Example page structure:
 # JSON-first CLI output
 
 ## Agent problem
+
 Agents cannot reliably parse prose or terminal tables.
 
 ## Decision rule
+
 If a CLI is expected to be called by an agent, every read command should support JSON output.
 
 ## Minimal surface
+
 ...
 
 ## Strong surface
+
 ...
 
 ## Anti-patterns
+
 ...
 
 ## Template
+
 ...
 
 ## Scorecard impact
+
 CLI Design + Error Handling + Data Retrievability
 ```
 

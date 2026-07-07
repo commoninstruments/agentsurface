@@ -746,11 +746,11 @@ House pattern for every new page: agent-facing problem in first 150 words → de
 
 ## Test Coverage Plan (repo-adapted)
 
-| Guard | Mechanism | Introduced |
-|---|---|---|
-| Template-path drift | integrity script check (fails first) | A1 |
-| Model-ID drift | integrity script check vs canonical list (fails first) | B1 |
-| Freshness decay | lastVerified staleness check | B6 |
-| Link/meta integrity | existing checks, run per task | — |
-| Build integrity | pnpm build per workstream | — |
-| Search behavior | manual dev-server verification (E3) | E3 |
+| Guard               | Mechanism                                              | Introduced |
+| ------------------- | ------------------------------------------------------ | ---------- |
+| Template-path drift | integrity script check (fails first)                   | A1         |
+| Model-ID drift      | integrity script check vs canonical list (fails first) | B1         |
+| Freshness decay     | lastVerified staleness check                           | B6         |
+| Link/meta integrity | existing checks, run per task                          | —          |
+| Build integrity     | pnpm build per workstream                              | —          |
+| Search behavior     | manual dev-server verification (E3)                    | E3         |
