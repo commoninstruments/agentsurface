@@ -138,6 +138,7 @@ const agentSurface = [
   { href: "/llms.txt", path: "llms.txt", role: "section index" },
   { href: "/llms-full.txt", path: "llms-full.txt", role: "every page, inlined" },
   { href: "/AGENTS.md", path: "AGENTS.md", role: "repo map" },
+  { href: "/api/md/index", path: "/api/md", role: "any page as Markdown" },
   { href: "/mcp", path: "/mcp", role: "search + fetch tools" },
   {
     href: "/.well-known/mcp/server-card.json",
@@ -148,11 +149,8 @@ const agentSurface = [
 
 function AgentSurfacePanel() {
   return (
-    <aside className="mt-12 lg:mt-2">
-      <p className="text-xs leading-5 text-fd-muted-foreground">
-        This site is agent-readable itself. Its own surface:
-      </p>
-      <ul className="mt-4 divide-y divide-fd-border border-y border-fd-border">
+    <aside className="mt-12 lg:mt-3">
+      <ul className="divide-y divide-fd-border border-y border-fd-border">
         {agentSurface.map((row) => (
           <li key={row.path}>
             <a
@@ -167,11 +165,6 @@ function AgentSurfacePanel() {
           </li>
         ))}
       </ul>
-      <p className="mt-4 text-xs leading-5 text-fd-muted-foreground">
-        Every <span className="font-mono text-[0.8125rem]">/docs</span> page also returns Markdown
-        when a request sends{" "}
-        <span className="font-mono text-[0.8125rem]">Accept: text/markdown</span>.
-      </p>
     </aside>
   );
 }
