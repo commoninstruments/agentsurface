@@ -3,6 +3,8 @@ import path from "node:path";
 
 const repoRoot = process.cwd();
 const docsRoot = path.join(repoRoot, "src/content/docs");
+const referencesRoot = path.join(repoRoot, "skills/surface/references");
+const templatesRoot = path.join(repoRoot, "templates");
 
 function walk(dir) {
   const out = [];
@@ -119,7 +121,50 @@ for (const metaFile of metaFiles) {
   }
 }
 
-if (linkIssues.length === 0 && metaIssues.length === 0) {
+// Template-citation existence check.
+//
+// Scans docs MDX and skill reference markdown for citations of template files
+// (e.g. `templates/foo.ts` or `/templates/errors-and-auth/jwt-validate.ts`) and
+// verifies each cited path resolves to a real file under the repo's templates/
+// directory. Citations inside fenced code blocks are still real citations, so we
+// scan raw content here (no stripCode).
+const TEMPLATE_CITATION = /\btemplates\/[A-Za-z0-9._/-]+\.(?:ts|tsx|yaml|json|md|txt|mdc)\b/gi;
+
+function collectFiles(root, extensions) {
+  if (!fs.existsSync(root)) {
+    return [];
+  }
+  return walk(root).filter((file) => extensions.some((ext) => file.endsWith(ext)));
+}
+
+const templateSourceFiles = [
+  ...collectFiles(docsRoot, [".mdx"]),
+  ...collectFiles(referencesRoot, [".md"]),
+];
+
+const templateIssues = [];
+for (const file of templateSourceFiles) {
+  const content = fs.readFileSync(file, "utf-8");
+  for (const match of content.matchAll(TEMPLATE_CITATION)) {
+    // Only treat as a citation if the segment starts with "templates/", optionally
+    // preceded by a leading slash. Reject continuations like "sub-templates/foo.ts".
+    const before = content[match.index - 1];
+    if (before !== undefined && before !== "/" && /[A-Za-z0-9._-]/.test(before)) {
+      continue;
+    }
+
+    const citedPath = match[0];
+    const resolved = path.join(templatesRoot, citedPath.replace(/^templates\//, ""));
+    if (!fs.existsSync(resolved)) {
+      const line = content.slice(0, match.index).split("\n").length;
+      templateIssues.push(
+        `${path.relative(repoRoot, file)}:${line} — cited path does not exist: ${citedPath}`,
+      );
+    }
+  }
+}
+
+if (linkIssues.length === 0 && metaIssues.length === 0 && templateIssues.length === 0) {
   console.log("docs integrity check passed");
   process.exit(0);
 }
@@ -134,6 +179,13 @@ if (linkIssues.length > 0) {
 if (metaIssues.length > 0) {
   console.error("Docs metadata integrity issues:");
   for (const issue of metaIssues) {
+    console.error(`- ${issue}`);
+  }
+}
+
+if (templateIssues.length > 0) {
+  console.error("Broken template citations:");
+  for (const issue of templateIssues) {
     console.error(`- ${issue}`);
   }
 }
