@@ -1,4 +1,4 @@
 {
   "title": "Agentic UI",
-  "pages": ["index"]
+  "pages": ["index", "session-control", "mcp-apps"]
 }

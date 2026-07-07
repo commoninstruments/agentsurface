@@ -13,6 +13,13 @@ Agentic UI is the product surface around agent work. It is not only a chat box. 
 - Make cancellation and correction available while work is running.
 - Preserve enough history for trust, audit, and recovery without dumping raw traces into the UI.
 
+## Section Pages
+
+This page is the overview: the UI shapes, the event model, tool rendering, and streaming. Two topics have their own pages:
+
+- [Session Control](/docs/agentic-ui/session-control) — the controller layer between the UI and the agent loop: modes, subagent surfacing, tool approvals, thread state, and mid-run steering.
+- [MCP Apps](/docs/agentic-ui/mcp-apps) — interactive UI delivered through MCP tool results, so a server can ship a rich interface to any supporting client.
+
 ## UI Shapes
 
 | Shape                   | Use when                                                     | Avoid when                                          |
@@ -48,6 +55,8 @@ Common event types:
 
 Every event should carry a stable run ID, timestamp, source, and display-safe summary. Sensitive tool inputs and raw model prompts should stay out of client-visible events unless the product explicitly exposes them.
 
+You do not have to invent this event vocabulary from scratch. AG-UI, originated at CopilotKit, is an emerging multi-vendor event protocol for streaming agent state to a UI; track its status on the [Emerging Standards Watchlist](/docs/protocols/emerging-standards).
+
 ## Tool Rendering
 
 Do not render all tool calls as generic JSON. The UI should translate tool state into useful product affordances:
@@ -61,36 +70,9 @@ Do not render all tool calls as generic JSON. The UI should translate tool state
 
 For risky tools, split "prepare" from "commit." The agent can draft an email, create an invoice preview, or stage a file change, but the UI should require explicit approval before sending, charging, deleting, or publishing.
 
-## Approval States
+## Approval and Steering
 
-Human-in-the-loop flows need durable state, not a modal that disappears on refresh.
-
-Use explicit states:
-
-- `drafted`: the agent prepared a proposed action
-- `needs_approval`: the user or reviewer must decide
-- `approved`: execution may proceed
-- `rejected`: execution must stop or revise
-- `expired`: approval was not granted in time
-- `executed`: the side effect happened
-- `rolled_back`: a compensating action ran
-
-Approval records should include who approved, what they saw, what changed after approval, and which execution used that approval.
-
-## Correction And Steering
-
-Users need ways to steer the agent without starting over:
-
-- edit the goal
-- remove a source
-- change a selected tool
-- revise a draft
-- narrow the scope
-- pause or cancel the run
-- retry a failed step
-- escalate to a human
-
-Correction works best when the underlying workflow has checkpoints. If all state lives only in a model transcript, the UI cannot reliably resume from the right point.
+Risky actions need an explicit approval state machine, and a running agent needs affordances to be corrected without starting over. Both belong to the controller layer, and both are covered in full on [Session Control](/docs/agentic-ui/session-control): the durable approval states an action moves through, and the steering controls that let a user edit the goal, swap a tool, revise a draft, or inject a new instruction mid-run.
 
 ## Context Display
 
@@ -146,6 +128,8 @@ Before shipping an agentic UI, verify:
 
 ## Related
 
+- [Session Control](/docs/agentic-ui/session-control)
+- [MCP Apps](/docs/agentic-ui/mcp-apps)
 - [Human-in-the-Loop](/docs/multi-agent/human-in-the-loop)
 - [External-App Routing](/docs/cookbook/external-app-routing)
 - [Notification to Conversation](/docs/cookbook/notification-to-conversation)

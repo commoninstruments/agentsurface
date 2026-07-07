@@ -1,0 +1,88 @@
+---
+title: MCP Apps
+description: Interactive UI delivered through MCP — how a server ships rich, sandboxed interfaces to any supporting client via tool results, when to use it over plain structured output, and its client support matrix.
+lastVerified: 2026-07-06
+---
+
+## Summary
+
+Chat-only tool results flatten rich interactions. When a tool returns a table, a form, a chart, or a picker, a text-only client can only render a serialized blob and hope the model narrates it well. MCP Apps let an MCP server ship an interactive UI surface that any supporting client renders inline, so a "book a flight" tool can return a real date-and-seat picker instead of a paragraph describing one. The server declares the UI; the client hosts it in a sandbox; the interaction flows back through the same MCP connection.
+
+Reach for MCP Apps when the value is in the interaction — selecting, filtering, previewing, confirming — and plain structured output when the client or the model can act on the data directly. Because client support is uneven, every MCP App must degrade gracefully to text.
+
+<Callout type="info">
+  MCP Apps is the first official MCP extension (SEP-1865), Stable at version `2026-01-26`. It merges
+  the earlier MCP-UI and OpenAI Apps SDK lineages into one standard; the reference SDK is v1.7.4
+  (2026-06-05). Supporting clients include ChatGPT, Claude, VS Code, Goose, Postman, and Microsoft
+  365 Copilot, and OpenAI now directs new ChatGPT apps to the MCP Apps standard keys rather than a
+  proprietary surface.
+</Callout>
+
+<Callout type="warn">
+  This page tracks the MCP Apps extension, which is normalized against the paths already public in
+  the `2026-07-28` MCP specification release candidate. That RC — the largest MCP revision since
+  launch — lands in roughly three weeks. Recheck this page after the release; the extension
+  framework it rides on is stabilizing alongside it.
+</Callout>
+
+## When to Use It
+
+Use MCP Apps when:
+
+- the useful output is an interaction, not a value — a form to fill, a list to filter, a range to select, a diff to accept
+- the result benefits from custom controls or a visual layout that text cannot carry (charts, maps, media, side-by-side comparisons)
+- the user should act inside the result and send a structured response back, rather than typing a follow-up message
+
+Use plain structured tool output when:
+
+- the model or the calling code consumes the result directly and no human interaction is needed mid-call
+- the data is small and text-renderable, and a custom UI would add cost without adding clarity
+- you cannot guarantee the client supports MCP Apps and cannot afford a degraded experience
+
+The decision rule: if removing the UI would remove the point of the tool, ship an MCP App; if the UI is decoration over data the model already has, ship structured output.
+
+## Architecture
+
+MCP Apps extend the normal tool-call flow with a UI resource. The shape is **tool result → UI resource → client rendering**:
+
+1. The agent calls a tool over the standard MCP connection.
+2. The server returns a result that references a UI resource — declarative UI plus the data to bind into it — instead of, or alongside, plain text content.
+3. The client fetches and renders that UI resource in a sandboxed surface inside its own interface.
+4. User interaction inside the rendered UI produces structured events that flow back to the server through the MCP connection, which can update the UI or return a final tool result.
+
+Because the UI travels as a resource attached to a tool result, MCP Apps reuse MCP's existing transport, capability negotiation, and authorization rather than defining a parallel channel.
+
+## Tool-UI Lifecycle
+
+The lifecycle runs alongside the ordinary tool call:
+
+- **Declare** — the server advertises that a tool can return a UI resource, so a client can decide whether it supports rendering it before the call.
+- **Return** — the tool call resolves to a UI resource bound to the tool's data.
+- **Render** — the client mounts the UI in a sandbox and displays it inline in the conversation.
+- **Interact** — user actions in the UI emit structured messages back to the server.
+- **Resolve** — the server produces a final result, and the UI either updates in place or is replaced by the settled outcome.
+- **Degrade** — if the client cannot render the UI, it falls back to the text content the server included for exactly this case.
+
+## Security Model
+
+An MCP App is untrusted UI from a third-party server running inside a trusted client. The security model rests on two boundaries:
+
+- **Sandboxed rendering** — the client hosts the UI in an isolated surface with no direct access to the client's privileges, the host page, or the user's other sessions. The UI can only communicate through the constrained MCP message channel.
+- **Capability boundaries** — what the UI can request and what the server can do on the user's behalf are still governed by MCP's authorization and capability declarations. Rendering a UI does not widen a server's permissions; the same token, scope, and approval rules apply as for any tool call.
+
+Treat interactive results with the same posture as any other tool output: the UI can propose actions, but irreversible side effects still belong behind the approval and authorization layers described in [Session Control](/docs/agentic-ui/session-control) and [Human-in-the-Loop](/docs/multi-agent/human-in-the-loop).
+
+## Failure Modes
+
+- **Assuming universal support:** Client support is a matrix, not a guarantee. A UI resource that renders in ChatGPT or Claude may arrive at a client that cannot host it. Always include text content the client can fall back to.
+- **No graceful degradation:** The tool returns only a UI resource, so an unsupporting client shows nothing useful. Every MCP App must carry a text representation of the same result.
+- **UI as the source of truth:** Trusting values the sandboxed UI sends back without server-side validation. The UI is untrusted input; validate its events like any other tool arguments.
+- **Privilege leakage:** Expecting the sandbox to grant the UI access to client internals or user credentials. The sandbox exists precisely to deny that; design the UI to work within the constrained channel.
+- **Drifting with the spec:** Building against extension behavior that shifts when the 2026-07-28 RC lands. Pin to the Stable `2026-01-26` extension and recheck after release.
+
+## Related
+
+- [MCP Protocol](/docs/protocols/mcp) — the tool, resource, and authorization primitives MCP Apps build on
+- [MCP Servers](/docs/mcp-servers) — server implementation patterns, including how tools return results
+- [Agentic UI](/docs/agentic-ui) — the broader interface surface MCP Apps render inside
+- [Session Control](/docs/agentic-ui/session-control) — approval and controller layer around interactive results

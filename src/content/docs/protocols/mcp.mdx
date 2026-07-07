@@ -20,7 +20,7 @@ Agent → connects via stdio/HTTP → MCP Server
 - Stateful JSON-RPC over stdio or HTTP
 - Authorization for protected HTTP servers via OAuth protected-resource metadata and authorization-server discovery
 - Server advertises capabilities; agent selects which to use
-- MCP Apps — the first official MCP extension (SEP-1865, Stable `2026-01-26`) — add interactive UI surfaces inside compatible clients (ChatGPT, Claude, VS Code, Goose, Postman)
+- MCP Apps — the first official MCP extension (SEP-1865, Stable `2026-01-26`) — add interactive UI surfaces inside compatible clients (ChatGPT, Claude, VS Code, Goose, Postman); see [MCP Apps](/docs/agentic-ui/mcp-apps)
 - Agent Skills complement MCP by packaging reusable instructions, scripts, references, and assets
 
 MCP is the protocol that connects AI models to the external world. It defines a standard wire format for an agent to discover what a server can do, call tools, read resources, use structured prompts, and execute long-running async tasks — all over a single stateful connection. Implement MCP first when you are exposing tools, data, or workflows to external agents.

@@ -255,6 +255,7 @@ const FAST_DECAY = [
   "testing/observability",
   "testing/promptfoo",
   "authentication/auth-md",
+  "authentication/agent-identity",
   "reference-links/models",
   "runtime-boundaries/durable-execution",
   "agentic-ui/mcp-apps",
