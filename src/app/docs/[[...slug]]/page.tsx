@@ -11,11 +11,15 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
   }
 
   const MDX = page.data.body;
+  const lastVerified = page.data.lastVerified;
 
   return (
     <DocsPage toc={page.data.toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      {lastVerified ? (
+        <p className="text-fd-muted-foreground -mt-2 mb-2 text-xs">Last verified: {lastVerified}</p>
+      ) : null}
       <DocsBody>
         <MDX components={{ ...defaultMdxComponents }} />
       </DocsBody>

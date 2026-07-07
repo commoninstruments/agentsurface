@@ -228,11 +228,106 @@ for (const file of modelScanFiles) {
   }
 }
 
+// lastVerified freshness check.
+//
+// Docs carry an optional `lastVerified: YYYY-MM-DD` frontmatter stamp. Two rules:
+//   (a) STALE — any page with a stamp older than STALE_AFTER_DAYS is flagged so
+//       the content gets re-checked against upstream reality.
+//   (b) FAST_DECAY — pages whose subject matter changes quickly (models, MCP
+//       server patterns, discovery/retrieval mechanics, protocols, the tooling
+//       catalog) are REQUIRED to carry a stamp. A missing stamp is flagged.
+const STALE_AFTER_DAYS = 120;
+
+// Directory entries ending in "/*" expand to every .mdx page in that directory.
+const FAST_DECAY = [
+  "mcp-servers/real-world-examples",
+  "mcp-servers/nextjs-integration",
+  "discovery/well-known-endpoints",
+  "discovery/structured-data",
+  "discovery/robots-txt",
+  "discovery/llms-txt",
+  "data-retrievability/embeddings",
+  "data-retrievability/multimodal-embeddings",
+  "data-retrievability/vector-databases",
+  "data-retrievability/index",
+  "agents/anthropic-platform",
+  "testing/observability",
+  "testing/promptfoo",
+  "authentication/auth-md",
+  "reference-links/models",
+  "protocols/*",
+  "tooling-catalog/*",
+];
+
+function docSlug(file) {
+  return path
+    .relative(docsRoot, file)
+    .replaceAll(path.sep, "/")
+    .replace(/\.mdx$/, "");
+}
+
+function expandFastDecay(patterns) {
+  const slugs = new Set();
+  for (const pattern of patterns) {
+    if (pattern.endsWith("/*")) {
+      const dir = path.join(docsRoot, pattern.slice(0, -2));
+      if (!fs.existsSync(dir)) {
+        continue;
+      }
+      for (const entry of fs.readdirSync(dir)) {
+        if (entry.endsWith(".mdx")) {
+          slugs.add(`${pattern.slice(0, -2)}/${entry.replace(/\.mdx$/, "")}`);
+        }
+      }
+    } else {
+      slugs.add(pattern);
+    }
+  }
+  return slugs;
+}
+
+function parseLastVerified(content) {
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!fmMatch) {
+    return null;
+  }
+  const lineMatch = fmMatch[1].match(/^lastVerified:\s*["']?(\d{4}-\d{2}-\d{2})["']?\s*$/m);
+  return lineMatch ? lineMatch[1] : null;
+}
+
+const fastDecaySlugs = expandFastDecay(FAST_DECAY);
+const stampedSlugs = new Set();
+const freshnessIssues = [];
+const today = new Date();
+
+for (const file of mdxFiles) {
+  const content = fs.readFileSync(file, "utf-8");
+  const lastVerified = parseLastVerified(content);
+  const slug = docSlug(file);
+
+  if (lastVerified) {
+    stampedSlugs.add(slug);
+    const ageDays = Math.floor((today - new Date(`${lastVerified}T00:00:00Z`)) / 86_400_000);
+    if (ageDays > STALE_AFTER_DAYS) {
+      freshnessIssues.push(
+        `${path.relative(repoRoot, file)} — stale lastVerified (${lastVerified}, ${ageDays} days)`,
+      );
+    }
+  }
+}
+
+for (const slug of [...fastDecaySlugs].toSorted()) {
+  if (!stampedSlugs.has(slug)) {
+    freshnessIssues.push(`${slug}.mdx — missing lastVerified (required fast-decay page)`);
+  }
+}
+
 if (
   linkIssues.length === 0 &&
   metaIssues.length === 0 &&
   templateIssues.length === 0 &&
-  modelIssues.length === 0
+  modelIssues.length === 0 &&
+  freshnessIssues.length === 0
 ) {
   console.log("docs integrity check passed");
   process.exit(0);
@@ -262,6 +357,13 @@ if (templateIssues.length > 0) {
 if (modelIssues.length > 0) {
   console.error("Model IDs not in canonical list (reference-links/models.mdx):");
   for (const issue of modelIssues) {
+    console.error(`- ${issue}`);
+  }
+}
+
+if (freshnessIssues.length > 0) {
+  console.error("Docs freshness (lastVerified) issues:");
+  for (const issue of freshnessIssues) {
     console.error(`- ${issue}`);
   }
 }
