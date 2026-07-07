@@ -70,7 +70,7 @@ response
 
 ### Output processors
 
-- **Cost guards and token limiters** — cap tokens per request and spend per run. For autonomous agents this is the load-bearing control, not a nicety.
+- **Cost guards and token limiters** — cap tokens per request and spend per run. For autonomous agents with no human watching, this is the control that stops a runaway loop from draining the budget.
 - **Response moderation** — check generated text against your content policy before it reaches the user.
 - **PII scrubbing** — catch personal data the model may have reconstructed or echoed.
 - **System-prompt-leak scrubbing** — detect and strip fragments of the system prompt or internal instructions from responses.

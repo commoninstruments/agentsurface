@@ -81,7 +81,7 @@ Users need to correct a running agent without starting over. Steering is the set
 
 Steering works best when the underlying run has checkpoints. If all state lives in a single model transcript, the controller cannot cleanly splice a new instruction into a run or resume from the right point after a correction. The runtime side of this — replay-safe activities, checkpointing partial state, injecting signals into a live workflow — belongs to [Durable Execution](/docs/runtime-boundaries/durable-execution). Session control owns the UX: how the injection is captured, shown, and acknowledged; durable execution owns how the running workflow absorbs it.
 
-The event-protocol angle is worth tracking here. CopilotKit's AG-UI is the current de facto layer for streaming agent state and steering events to a UI across vendors; see the [Emerging Standards Watchlist](/docs/protocols/emerging-standards) for its status.
+CopilotKit's AG-UI is the current de facto layer for streaming agent state and steering events to a UI across vendors; see the [Emerging Standards Watchlist](/docs/protocols/emerging-standards) for its status.
 
 <Callout type="info">
   Voice barge-in — interrupting a speaking or acting agent by talking over it — is the canonical

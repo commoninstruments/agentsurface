@@ -1,6 +1,6 @@
 ---
 title: Agentic Commerce Protocols
-description: Foundation-backed protocols with real deployment for agent-initiated payments — UCP, AP2, and x402 — plus the honest status of ACP and the card-network schemes
+description: Foundation-backed protocols with real deployment for agent-initiated payments — UCP, AP2, and x402 — plus the status of ACP and the card-network schemes
 lastVerified: 2026-07-06
 ---
 
@@ -13,7 +13,7 @@ This page covers only foundation-backed protocols that have real governance and 
 - **UCP** — Google + Shopify; the current commerce center of gravity, thousands of live stores
 - **AP2** — Google-originated, now at the FIDO Alliance; the signed-mandate primitive, deployments still thin
 - **x402** — Coinbase-originated HTTP 402 payments, now a Linux Foundation project running at AWS and Cloudflare edge
-- **ACP** — covered honestly below as deflating; full page at [Agentic Commerce Protocol](/docs/protocols/acp)
+- **ACP** — covered below as deflating; full page at [Agentic Commerce Protocol](/docs/protocols/acp)
 
 The common primitive across all of them is a **mandate**: a signed, scoped, revocable authorization that proves an agent may make a specific payment. Mandates are an instance of agent authorization generally — see [Agent Identity](/docs/authentication/agent-identity).
 
@@ -31,7 +31,7 @@ If you sell through Shopify or one of the launch platforms, UCP is likely to rea
 
 AP2's core object is the **mandate**: a signed payment authorization that binds an agent, a user, an amount cap, and a scope into a single verifiable credential a merchant or payment network can check. This is the primitive UCP is compatible with and the reason AP2 matters even where it is not yet directly deployed.
 
-Be honest about maturity: AP2 has serious backing and a clean model, but production deployments are still thin. Adopt the mandate concept now; pin a hard dependency on AP2 endpoints only once your payment partner ships concrete support.
+AP2 has serious backing and a clean model, but production deployments are still thin. Adopt the mandate concept now; pin a hard dependency on AP2 endpoints only once your payment partner ships concrete support.
 
 ## x402 — HTTP 402 Payments
 
@@ -49,7 +49,7 @@ ACP (OpenAI + Stripe) is Beta and deflating. OpenAI shut down ChatGPT Instant Ch
 
 ## Decision Rule: Which Protocol by Role
 
-Which protocol matters depends on your role, and for two of the three the honest guidance today is watch, not build.
+Which protocol matters depends on your role, and for two of the three the guidance today is watch, not build.
 
 - **Merchant / commerce platform** — UCP is the one to track and, where your platform offers it, enable. It is where store adoption is concentrating. Do not hand-build a competing checkout surface; ride the platform integration.
 - **Agent platform** — Adopt the **mandate** model (AP2-style signed intent) as your internal representation of spending authority now, because every serious protocol converges on it. Defer pinning to a specific protocol's wire format until your payment partner commits.

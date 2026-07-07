@@ -312,7 +312,7 @@ export const DESTRUCTIVE_ANNOTATIONS = {
 } as const;
 
 /**
- * Composite tool pair for seamless draft-then-confirm workflow.
+ * Composite tool pair for the draft-then-confirm workflow.
  */
 export class DraftThenConfirmToolSet {
   private readonly store: DraftRecordStore;

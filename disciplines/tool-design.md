@@ -2,7 +2,7 @@
 
 ## Summary
 
-Agent-grade tools are not API endpoints; they are cognitive interfaces designed for autonomous reasoning. A well-designed tool exposes the _atomic actions_ that an agent can take to achieve goals, with clear input contracts, predictable outputs, and explicit error modes. Tools should be simple enough to compose, powerful enough to be useful, and well-documented enough that an agent can infer intent from signature and description alone.
+Agent-grade tools are not API endpoints; they are cognitive interfaces designed for autonomous reasoning. A well-designed tool exposes the _atomic actions_ that an agent can take to achieve goals, with clear input contracts, predictable outputs, and explicit error modes. Tools should be simple enough to compose, complete enough to accomplish a real action, and well-documented enough that an agent can infer intent from signature and description alone.
 
 - **Atomicity**: Each tool does one thing; composition (chains, loops) is the agent's job
 - **Clarity**: Signature, description, and error modes must be understandable at a glance
