@@ -249,6 +249,7 @@ Use these defaults unless the project already has a better convention:
 - OAuth Protected Resource Metadata (RFC 9728): https://www.rfc-editor.org/rfc/rfc9728.html
 - Agent Surface RAG patterns: /docs/data-retrievability/rag-patterns
 - Agent Surface tooling catalog: /docs/tooling-catalog
+- Agent Surface disciplines (longer-form design guidance): `disciplines/`
 
 ## Skill Folder Structure
 

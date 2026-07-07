@@ -16,7 +16,7 @@ An agent with 5 focused tools (create_invoice, get_customer, validate_vat, send_
 
 **When to use**: When tools have clear input/output contracts and errors are recoverable.
 
-**See also**: `/disciplines/tool-design.md`, `/references/tool-cookbook.md`
+**See also**: `/disciplines/tool-design.md`, `/docs/tool-design/tool-curation`
 
 ---
 
@@ -36,7 +36,7 @@ After composing a draft (e.g., invoice text), prompt the agent to review: "Does 
 3. If not approved, agent refines and re-submits
 ```
 
-**See also**: `/cookbook/reflection-pattern.md`
+**See also**: `/docs/testing/llm-as-judge`
 
 ---
 
@@ -55,7 +55,7 @@ Each sub-goal is a focused task, easier to reason about and measure.
 
 **When to use**: Long-running workflows (>5 minutes) or complex domains with multiple stages.
 
-**See also**: `/disciplines/orchestration.md`, `/cookbook/goal-decomposition.md`
+**See also**: `/disciplines/orchestration.md`, `/docs/multi-agent/supervisor-pattern`
 
 ---
 
@@ -81,7 +81,7 @@ Models learn from examples better than from descriptions.
 
 **When to use**: Whenever tool calls are complex or non-obvious.
 
-**See also**: `/references/prompt-engineering.md`, `/cookbook/few-shot-examples.md`
+**See also**: `/docs/cookbook/system-prompt-as-config`, `/docs/api-surface/tool-definitions`
 
 ---
 
@@ -101,7 +101,7 @@ The tool enforces the constraint; the agent never violates it (or gets a clear e
 
 **When to use**: Any domain with legal or financial rules.
 
-**See also**: `/disciplines/tool-design.md#explicit-parameter-constraints`, `/references/safety.md`
+**See also**: `/disciplines/tool-design.md#explicit-parameter-constraints`, `/docs/tool-design/idempotency-and-safety`
 
 ---
 
@@ -124,7 +124,7 @@ Each error type has a recovery path. Only unrecoverable errors escalate.
 
 **When to use**: Integrations with external systems, unreliable tools, or high-stakes tasks.
 
-**See also**: `/references/error-handling.md`, `/cookbook/resilience-patterns.md`
+**See also**: `/docs/error-handling/errors-for-agents`, `/docs/error-handling/retry-patterns`
 
 ---
 
@@ -136,7 +136,7 @@ Agent goal: "Should we approve this loan?" Tool: retrieve_customer_credit_histor
 
 **When to use**: Any task requiring current or domain-specific data.
 
-**See also**: `/disciplines/retrievability.md`, `/references/retrieval-cookbook.md`
+**See also**: `/disciplines/retrievability.md`, `/docs/data-retrievability/rag-patterns`
 
 ---
 
@@ -153,7 +153,7 @@ Context (user corrections) accumulates; agent adapts.
 
 **When to use**: Interactive assistants, helpdesk agents, exploratory analysis.
 
-**See also**: `/cookbook/conversation-management.md`, `/references/context-windows.md`
+**See also**: `/docs/multi-agent/memory-patterns`, `/docs/cli-design/context-window-discipline`
 
 ---
 
@@ -180,7 +180,7 @@ Over time, you see: which tools are called most often, which are slow, which fai
 
 **When to use**: Always. Observability is non-negotiable.
 
-**See also**: `/references/observability.md`, `/references/logging.md`
+**See also**: `/docs/testing/observability`, `/docs/tooling-catalog/evaluation-and-observability`
 
 ---
 
@@ -199,7 +199,7 @@ Confidence gates determine routing. High-confidence outputs bypass humans; low-c
 
 **When to use**: Any task with human-in-the-loop possibilities (approval workflows, QA).
 
-**See also**: `/cookbook/confidence-routing.md`, `/references/uncertainty.md`
+**See also**: `/docs/multi-agent/human-in-the-loop`, `/docs/scoring/calibration`
 
 ---
 
@@ -234,6 +234,6 @@ Not every agent uses all patterns; choose the subset that fits your domain.
 ## See Also
 
 - `/disciplines/` — Deep dives on foundational topics (tool design, orchestration, evaluation, retrievability, proactive agents)
-- `/cookbook/` — Step-by-step recipes for each pattern
+- `/docs/cookbook/` — Step-by-step recipes for each pattern
 - `/templates/` — Copy-paste starting points for common agent types
 - `AGENTS.md` (root) — Formal specification for tools and agents

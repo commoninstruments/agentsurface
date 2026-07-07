@@ -194,6 +194,6 @@ Agent makes a mistake (e.g., approves an invalid invoice). Human corrects it. Ag
 
 ## See Also
 
-- `/cookbook/autonomous-background-agents` — Scheduled workers, batching, idempotency implementation
-- `/cookbook/notification-to-conversation` — Notification context storage and conversation continuity
+- `/docs/cookbook/autonomous-background-agents` — Scheduled workers, batching, idempotency implementation
+- `/docs/cookbook/notification-to-conversation` — Notification context storage and conversation continuity
 - `/disciplines/orchestration.md` — Scheduling, queues, and event streams

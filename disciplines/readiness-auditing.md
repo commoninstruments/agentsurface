@@ -1,4 +1,4 @@
-# Agent Evaluation Discipline
+# Readiness Auditing
 
 ## Summary
 

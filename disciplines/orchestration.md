@@ -185,7 +185,7 @@ Agent A calls Agent B via HTTP, waits for response.
 ## See Also
 
 - `/disciplines/agentic-patterns.md` — Indexing multi-agent patterns and topologies
-- `/references/orchestration-cookbook.md` — Temporal, Inngest, Trigger.dev examples
+- `/docs/tooling-catalog/frameworks-and-runtimes` — Temporal, Inngest, Trigger.dev examples
 - `AGENTS.md` (root) — Formal tool and agent schemas
 - 12-factor app principles — Stateless processes, externalized config
 - Cognition paper ("Towards Autonomous Agents") — Reasoning about scope and state

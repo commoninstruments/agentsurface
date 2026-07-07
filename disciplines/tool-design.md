@@ -168,8 +168,8 @@ No description, no schema, no examples.
 
 ## See Also
 
-- `/cookbook/semantic-tool-selection` — Embedding-based filtering for large tool sets
-- `/cookbook/tool-annotations` — READ_ONLY/WRITE/DESTRUCTIVE safety annotations
-- `/cookbook/agentic-loop` — How tools are orchestrated within agent loops
-- `/tool-design/schemas` — Parameter schemas and validation patterns
-- `/tool-design/anti-patterns` — Common tool design mistakes
+- `/docs/cookbook/semantic-tool-selection` — Embedding-based filtering for large tool sets
+- `/docs/cookbook/tool-annotations` — READ_ONLY/WRITE/DESTRUCTIVE safety annotations
+- `/docs/cookbook/agentic-loop` — How tools are orchestrated within agent loops
+- `/docs/tool-design/schemas` — Parameter schemas and validation patterns
+- `/docs/tool-design/anti-patterns` — Common tool design mistakes

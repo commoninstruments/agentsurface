@@ -167,7 +167,7 @@ Embeddings are weeks out of date. Agent retrieves stale information.
 
 ## See Also
 
-- `/references/retrieval-cookbook.md` — Qdrant, Pinecone, Weaviate, Milvus configurations
-- `/references/chunking-guide.md` — LLM-specific chunk size recommendations
+- `/docs/data-retrievability/vector-databases` — Qdrant, Pinecone, Weaviate, Milvus configurations
+- `/docs/data-retrievability/retrieval-pipeline` — LLM-specific chunk size recommendations
 - RAGAS documentation — Retrieval-augmented generation evaluation
 - MTEB leaderboard — Compare embedding models and rerankers

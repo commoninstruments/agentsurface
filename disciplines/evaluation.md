@@ -182,7 +182,7 @@ Optimizing for accuracy while ignoring cost (agent spends $100 per task).
 
 ## See Also
 
-- `/references/eval-cookbook.md` — Building eval infrastructure (Evalite, RAGAS, custom harnesses)
-- `/references/metrics.md` — Formal definitions of pass@k, BLEU, MRR, NDCG for different domains
+- `/docs/testing/evaluation-framework` — Building eval infrastructure (Evalite, RAGAS, custom harnesses)
+- `/docs/testing/metrics` — Formal definitions of pass@k, BLEU, MRR, NDCG for different domains
 - `AGENTS.md` (root) — Tool and agent schemas (inform eval design)
 - "Evaluating LLM-based Systems" (Anthropic blog) — Measurement methodology
