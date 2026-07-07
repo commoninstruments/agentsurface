@@ -122,9 +122,11 @@ app.post("/mcp", (req, res, next) => {
 
 OAuth 2.1 with PKCE is mandatory for publicly accessible MCP servers as of the November 2025 MCP specification. It is the only authentication method that supports delegated authorization — where an agent acts on behalf of a user without the user handing over their credentials.
 
+The protocol-level model — protected-resource metadata discovery, authorization-server discovery, client registration options, and token audience binding — lives in [MCP Authorization](/docs/authentication/mcp-auth-model). This section is the server-implementer view: the endpoints you expose, PKCE, token validation, scope enforcement, and the on-behalf-of flow. Read the canonical page first if you need the full OAuth 2.1 discovery and registration flow; use this page to implement it.
+
 ### Required .well-known Endpoints
 
-Your server must expose two discovery endpoints. Clients read these to learn how to authenticate before they attempt a connection:
+Your server must expose two discovery endpoints so clients can discover your authorization server (the [MCP Authorization](/docs/authentication/mcp-auth-model) and [Protected Resource Metadata](/docs/authentication/protected-resource-metadata) pages cover the discovery protocol and full field set):
 
 **`GET /.well-known/oauth-protected-resource`** — declares that this resource requires OAuth and points to the authorization server:
 
@@ -340,3 +342,9 @@ console.error(`Received token: iss=${payload.iss} sub=${payload.sub} exp=${paylo
   intercepts it can use it. Never run an OAuth-authenticated MCP server over plain HTTP in
   production.
 </Callout>
+
+## Related
+
+- [MCP Authorization](/docs/authentication/mcp-auth-model) — canonical protocol flow: protected-resource metadata, authorization-server discovery, client registration, and token audience binding
+- [Protected Resource Metadata](/docs/authentication/protected-resource-metadata) — the `/.well-known/oauth-protected-resource` document your server publishes
+- [OAuth 2.1 for Agents](/docs/authentication/oauth-for-agents) — the underlying grant flow

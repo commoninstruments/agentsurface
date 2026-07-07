@@ -334,44 +334,9 @@ LAPIS is useful for:
 
 ## Auto-Generating MCP from OpenAPI
 
-Several tools convert OpenAPI specs into MCP servers automatically. None of them produce production-quality results out of the box — understanding what they generate and what to fix is the skill.
+The extensions above — especially `x-speakeasy-mcp` — feed directly into tools that generate MCP servers from your OpenAPI spec. Generation is only a starting point: a naive 1:1 mapping produces 50–300 tools that overwhelm agents, with descriptions written for human developers rather than agent reasoning. The correct workflow is generate → prune → rewrite → add composites, targeting 10–30 tools per domain.
 
-### Tool Comparison
-
-| Tool                  | Approach                       | Strengths                                                 | Limitations                                       |
-| --------------------- | ------------------------------ | --------------------------------------------------------- | ------------------------------------------------- |
-| Stainless             | SDK + MCP generation           | High-quality, polished output                             | Requires Stainless account; opinionated structure |
-| Speakeasy             | SDK + MCP generation           | `x-speakeasy-mcp` extension support; fine-grained control | Commercial; complex config                        |
-| FastMCP               | Python MCP server from OpenAPI | Fast setup; good for Python stacks                        | Limited description customization                 |
-| openapi-mcp-generator | Open source, zero config       | Free; works with any spec                                 | Naive 1:1 generation; no description rewriting    |
-
-### Why Naive Generation Fails
-
-Direct 1:1 generation from OpenAPI to MCP tools produces three classes of problems:
-
-**Tool explosion.** A 200-endpoint API becomes 200 MCP tools. Agents cannot select accurately from 200 tools. Selection accuracy drops sharply above 20 tools in context.
-
-**Structural mismatch.** OpenAPI was designed for REST clients that understand HTTP. MCP tools are for LLMs. The parameter structure, description format, and granularity that works for a REST client is wrong for an LLM.
-
-**Context bloat.** Auto-generated descriptions are either copied from OpenAPI (too HTTP-specific) or absent. Both degrade agent routing.
-
-### The Hybrid Approach
-
-Treat auto-generation as a starting point, not the final output:
-
-1. **Generate** the full tool set from your OpenAPI spec using your chosen tool
-2. **Audit** what was generated — which tools are missing, redundant, or badly described
-3. **Prune** approximately 90% — keep only the tools that are actually needed for the target use case
-4. **Rewrite descriptions** for the surviving tools using the [When / Why / How pattern](./openapi-for-agents#the-whenwhy-how-description-pattern)
-5. **Add composite tools** that combine common multi-step sequences into single tool calls
-
-The goal is not comprehensive coverage of your API surface. The goal is the minimal set of tools that lets an agent accomplish the target use cases reliably.
-
-<Callout type="info">
-  Start by identifying the top 5 user-facing tasks your API needs to support. Build tools for those
-  tasks, not for every endpoint. Expand the tool set incrementally as you validate that existing
-  tools work correctly.
-</Callout>
+For the full generator comparison (Stainless, Speakeasy, FastMCP, openapi-mcp-generator), the hybrid workflow step-by-step, and the reasoning behind not shipping generated output directly, see [Auto-Generating MCP from OpenAPI](/docs/mcp-servers/auto-generation). This page owns the extension mapping that those generators consume; that page owns the generation workflow.
 
 ## Checklist
 

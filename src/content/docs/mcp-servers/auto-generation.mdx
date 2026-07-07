@@ -143,7 +143,7 @@ The output is a directory of TypeScript files with one tool file per OpenAPI ope
 
 ## The x-speakeasy-mcp Extension
 
-The `x-speakeasy-mcp` extension works with Speakeasy's generator and can be added to any OpenAPI spec as a vendor extension. You can annotate your spec incrementally, adding MCP configuration to the operations you want to expose without modifying the spec's existing structure:
+The `x-speakeasy-mcp` extension works with Speakeasy's generator and can be added to any OpenAPI spec as a vendor extension. This section covers how it drives the generation workflow; for the full extension surface — tool-name overrides, scope grouping, parameter-description overrides, and pattern-based scope mapping — see [Semantic Extensions for Agent APIs](/docs/api-surface/openapi-extensions). You can annotate your spec incrementally, adding MCP configuration to the operations you want to expose without modifying the spec's existing structure:
 
 ```yaml
 paths:
@@ -231,3 +231,9 @@ src/
 ```
 
 The `generated/` directory is fully overwritten on each generation run. The `tools/` and `composites/` directories are manually maintained. The curated tools import types from `generated/` but define their own descriptions, schemas, and handlers.
+
+## Related
+
+- [Semantic Extensions for Agent APIs](/docs/api-surface/openapi-extensions) — the `x-speakeasy-mcp` and `x-action` extension mapping these generators consume
+- [OpenAPI for Agents](/docs/api-surface/openapi-for-agents) — the base spec design that generation reads from
+- [Tool Annotations](/docs/mcp-servers/annotations) — the behavioral hints generated tools should carry

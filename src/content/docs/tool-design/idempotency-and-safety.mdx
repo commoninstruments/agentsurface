@@ -278,19 +278,11 @@ async (params) => {
 
 ## MCP Annotations Reference
 
-([MCP 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25))
-
-| Annotation        | Default | Meaning                                                 |
-| ----------------- | ------- | ------------------------------------------------------- |
-| `readOnlyHint`    | false   | Tool does not modify server state                       |
-| `destructiveHint` | true    | Tool may delete or irreversibly modify data             |
-| `idempotentHint`  | false   | Calling multiple times with same inputs has same effect |
-| `openWorldHint`   | true    | Tool interacts with external systems beyond the server  |
-
-MCP defaults are conservative: tools are assumed writable, potentially destructive, non-idempotent, and open-world unless you say otherwise. Set hints only when the property is accurate for the implementation.
+The MCP `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint` hints let downstream clients reason about tool safety — the same read/write/destructive classifications above, expressed as machine-readable metadata. MCP defaults are conservative: tools are assumed writable, potentially destructive, non-idempotent, and open-world unless you say otherwise, so set hints only when the property is accurate for the implementation. See [Tool Annotations](/docs/mcp-servers/annotations) for the full semantics of each hint and how clients act on them.
 
 ## See also
 
+- [Tool Annotations](/docs/mcp-servers/annotations) — canonical semantics of the four MCP behavioral hints
 - `/docs/error-handling/idempotency` — retry logic and recovery patterns
 - ([MCP 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25))
 - ([Anthropic multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system))

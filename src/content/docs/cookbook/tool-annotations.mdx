@@ -16,16 +16,18 @@ Every MCP tool declares intent via annotations: `readOnlyHint`, `destructiveHint
 
 ## MCP Annotation Spec
 
-MCP tool definitions support an `annotations` object:
+MCP tool definitions support an `annotations` object with four hints — `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`:
 
 ```typescript
 interface ToolAnnotations {
-  readOnlyHint?: boolean; // True: no state change
-  destructiveHint?: boolean; // True: irreversible
-  idempotentHint?: boolean; // True: safe to retry
-  openWorldHint?: boolean; // True: external data (web search, APIs)
+  readOnlyHint?: boolean;
+  destructiveHint?: boolean;
+  idempotentHint?: boolean;
+  openWorldHint?: boolean;
 }
 ```
+
+The semantics of each hint, their conservative defaults, and how clients act on them are covered in [Tool Annotations](/docs/mcp-servers/annotations). This page assumes them and focuses on the applied registry pattern: collapsing the four hints into three presets and driving system prompts, client UI, and tool selection from them.
 
 The production app uses three presets:
 
@@ -592,6 +594,7 @@ test("system prompt includes safety rules for destructive tools", () => {
 
 ## See Also
 
+- [Tool Annotations](/docs/mcp-servers/annotations) — canonical semantics of the four MCP hints and client-behavior implications.
 - [Tool Design](/docs/tool-design) — MCP tool schema and transport.
 - [Agentic Loop](/docs/cookbook/agentic-loop) — how frameworks consume annotations.
 - [Two-Step Confirmation](/docs/cookbook/two-step-confirmation) — enforcing confirmation workflows.
