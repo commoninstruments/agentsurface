@@ -32,22 +32,22 @@ const paths = [
 
 const systemTopics = [
   {
-    desc: "Architecture, scaffolding, browser access, and platform tradeoffs.",
+    desc: "Design principles, sandboxes and workspaces, browser access, runtime guardrails, and platform tradeoffs.",
     href: "/docs/agents",
     title: "Agent systems",
   },
   {
-    desc: "Where logic, tools, state, approvals, and persistence should live.",
+    desc: "Where logic, tools, state, and approvals live — and when agent loops need durable execution.",
     href: "/docs/runtime-boundaries",
     title: "Runtime boundaries",
   },
   {
-    desc: "Interfaces for steering agents, reviewing work, and keeping users in control.",
+    desc: "Session control, tool approvals, mid-run steering, MCP Apps, and generative interfaces.",
     href: "/docs/agentic-ui",
     title: "Agentic UI",
   },
   {
-    desc: "Supervisors, swarms, councils, delegation, memory, and tool sprawl.",
+    desc: "Supervisors, swarms, councils, delegation, the five memory types, and tool sprawl.",
     href: "/docs/multi-agent",
     title: "Multi-agent",
   },
@@ -57,7 +57,7 @@ const systemTopics = [
     title: "Data retrievability",
   },
   {
-    desc: "Metrics, judges, red teams, traces, CI checks, and workflow harnesses.",
+    desc: "Metrics, judges, golden datasets, red teams, traces, and CI checks.",
     href: "/docs/testing",
     title: "Testing and evals",
   },
@@ -113,7 +113,7 @@ const references = [
     title: "Scoring framework",
   },
   {
-    desc: "MCP, A2A, ACP, Arazzo, discovery specs, and adjacent standards.",
+    desc: "MCP, A2A, ACP, agentic commerce, Arazzo, and the emerging-standards watchlist.",
     href: "/docs/protocols",
     title: "Protocols",
   },
@@ -123,7 +123,7 @@ const references = [
     title: "Tooling catalog",
   },
   {
-    desc: "Reusable production patterns for loops, approvals, background agents, routing, and MCP.",
+    desc: "Production patterns for loops, approvals, background agents, code execution, and MCP.",
     href: "/docs/cookbook",
     title: "Cookbook",
   },
@@ -141,12 +141,27 @@ function LinkList({ items }: { items: { title: string; desc: string; href: strin
         <Link
           key={item.title}
           href={item.href}
-          className="group rounded-lg border border-fd-border p-4 transition-colors hover:border-fd-ring hover:bg-fd-accent"
+          className="group rounded-lg border border-fd-border p-5 transition-colors hover:border-fd-ring hover:bg-fd-accent"
         >
-          <h3 className="text-sm font-medium text-fd-foreground group-hover:text-fd-accent-foreground">
+          <h3 className="text-[0.9375rem] font-medium text-fd-foreground group-hover:text-fd-accent-foreground">
             {item.title}
           </h3>
-          <p className="mt-1 text-xs leading-5 text-fd-muted-foreground">{item.desc}</p>
+          <p className="mt-1.5 text-xs leading-5 text-fd-muted-foreground">{item.desc}</p>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function LinkRows({ items }: { items: { title: string; desc: string; href: string }[] }) {
+  return (
+    <div className="mt-8 grid gap-x-12 gap-y-7 sm:grid-cols-2">
+      {items.map((item) => (
+        <Link key={item.title} href={item.href} className="group">
+          <h3 className="text-sm font-medium text-fd-foreground underline-offset-4 group-hover:underline">
+            {item.title}
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-fd-muted-foreground">{item.desc}</p>
         </Link>
       ))}
     </div>
@@ -157,9 +172,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-col items-center bg-fd-background text-fd-foreground">
       <section className="w-full max-w-5xl px-6 pb-14 pt-16 sm:px-10">
-        <p className="mb-4 text-xs font-medium uppercase tracking-[0.14em] text-fd-muted-foreground">
-          Agent-readable software
-        </p>
+        <p className="mb-4 font-mono text-xs text-fd-muted-foreground">agent-readable software</p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
           A field guide for software that agents can use.
         </h1>
@@ -189,7 +202,9 @@ export default function HomePage() {
       <section className="w-full border-t border-fd-border">
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 className="text-lg font-semibold text-fd-foreground">Start with the job</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-fd-foreground">
+              Start with the job
+            </h2>
             <span className="text-xs text-fd-muted-foreground">
               five routes through the same dense guide
             </span>
@@ -200,35 +215,39 @@ export default function HomePage() {
 
       <section className="w-full border-t border-fd-border">
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
-          <h2 className="text-lg font-semibold text-fd-foreground">Agent systems</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-fd-foreground">Agent systems</h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-fd-muted-foreground">
             These chapters cover the product and system design questions behind agents: where they
             run, how they use tools, what memory they need, how people supervise them, and how to
             prove they work.
           </p>
-          <LinkList items={systemTopics} />
+          <LinkRows items={systemTopics} />
         </div>
       </section>
 
       <section className="w-full border-t border-fd-border">
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
-          <h2 className="text-lg font-semibold text-fd-foreground">Agent-readable surfaces</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-fd-foreground">
+            Agent-readable surfaces
+          </h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-fd-muted-foreground">
             These chapters make existing software easier for agents to inspect, call, recover from,
             and keep within permission boundaries.
           </p>
-          <LinkList items={surfaces} />
+          <LinkRows items={surfaces} />
         </div>
       </section>
 
       <section className="w-full border-t border-fd-border">
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
-          <h2 className="text-lg font-semibold text-fd-foreground">Evaluation and reference</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-fd-foreground">
+            Evaluation and reference
+          </h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-fd-muted-foreground">
             Use these sections when you need to compare maturity, select a standard, pick
             infrastructure, or turn a pattern into an implementation plan.
           </p>
-          <LinkList items={references} />
+          <LinkRows items={references} />
         </div>
       </section>
 
@@ -236,7 +255,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
           <div className="grid gap-8 sm:grid-cols-[1fr_1fr]">
             <div>
-              <h2 className="font-mono text-lg font-semibold text-fd-foreground">surface</h2>
+              <h2 className="font-mono text-xl font-semibold text-fd-foreground">surface</h2>
               <p className="mt-3 max-w-sm text-sm leading-6 text-fd-muted-foreground">
                 The surface skill turns the guide into work on a repository. It can explain a topic,
                 audit readiness, write a transformation plan, scaffold agent infrastructure, or
@@ -264,7 +283,9 @@ export default function HomePage() {
       <section className="w-full border-t border-fd-border" style={{ overflowX: "clip" }}>
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 className="text-lg font-semibold text-fd-foreground">The language of agents</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-fd-foreground">
+              The language of agents
+            </h2>
             <span className="text-xs text-fd-muted-foreground">
               plain-language definitions for product and engineering teams
             </span>
