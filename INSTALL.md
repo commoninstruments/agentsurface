@@ -13,7 +13,7 @@ Agent Surface ships a single local skill:
 In Claude Code, type:
 
 ```
-/plugin install agentsurface
+/plugin install surface
 ```
 
 This installs the Agent Surface plugin from the Claude Code plugin marketplace if published there. The skill is then available as `/surface` in any project.
@@ -100,7 +100,7 @@ These runtimes also respect the AGENTS.md convention. Follow the Codex instructi
 The Skills CLI can install the skill from the GitHub repo:
 
 ```bash
-npx skills add https://github.com/howells/agentsurface --skill surface
+npx skills add https://github.com/howells/agentsurface
 ```
 
 This installs the Agent Surface skill:
@@ -119,7 +119,7 @@ For sharing via tarball or zip:
 
    ```bash
    cd agentsurface
-   zip -r surface-1.0.0.skill skills/surface/ -x "*.git*"
+   zip -r surface-2.1.0.skill skills/surface/ -x "*.git*"
    ```
 
 2. **Share the .skill file** with users via GitHub releases or another distribution channel.

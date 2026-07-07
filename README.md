@@ -85,8 +85,8 @@ High-signal parts of the repo:
 
 Prerequisites:
 
-- Node.js 20+
-- pnpm 9
+- Node 24.15+
+- pnpm 11
 
 Install and run the docs site:
 

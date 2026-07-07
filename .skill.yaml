@@ -6,7 +6,7 @@
 # skills/surface/SKILL.md (Claude Code) and AGENTS.md (Codex, generic agents).
 
 name: surface
-version: 2.0.0
+version: 2.1.0
 license: MIT
 
 description: |
@@ -69,6 +69,5 @@ specialist-agents:
 
 # Distribution URLs (for future registry lookup)
 distribution:
-  npm: "@anthropic/surface"  # Not yet on npm, planned
   github: "https://github.com/howells/agentsurface/releases"
   claude-code-plugin: "surface"
