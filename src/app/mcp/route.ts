@@ -1,4 +1,4 @@
-import { source } from "@/lib/source";
+import { searchDocs } from "@/lib/search";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { readFileSync } from "node:fs";
@@ -75,7 +75,7 @@ function readDocsPage(slug: string): DocsPage | null {
 function buildServer(): McpServer {
   const server = new McpServer({
     name: "agentsurface-docs",
-    version: "1.0.0",
+    version: "2.1.0",
   });
 
   server.registerTool(
@@ -109,24 +109,16 @@ function buildServer(): McpServer {
         total: z.number().int(),
       },
     },
-    ({ query, limit = 5 }: { query: string; limit?: number }) => {
-      const q = query.toLowerCase();
-      const pages = source.getPages();
+    async ({ query, limit = 5 }: { query: string; limit?: number }) => {
+      const found = await searchDocs(query, limit);
 
-      const results = pages
-        .filter((page) => {
-          const title = (page.data.title || "").toLowerCase();
-          const description = (page.data.description || "").toLowerCase();
-          return title.includes(q) || description.includes(q);
-        })
-        .slice(0, limit)
-        .map((page) => ({
-          description: page.data.description || "",
-          markdownUrl: buildMarkdownUrl(page.slugs.join("/") || "index"),
-          slug: page.slugs.join("/"),
-          title: page.data.title,
-          url: `https://agentsurface.dev${page.url}`,
-        }));
+      const results = found.map((result) => ({
+        description: result.description,
+        markdownUrl: buildMarkdownUrl(result.slug),
+        slug: result.slug,
+        title: result.title,
+        url: result.url,
+      }));
 
       const structuredContent = { query, results, total: results.length };
 
