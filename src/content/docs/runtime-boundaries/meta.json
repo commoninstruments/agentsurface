@@ -1,4 +1,4 @@
 {
   "title": "Runtime Boundaries",
-  "pages": ["index"]
+  "pages": ["index", "durable-execution"]
 }

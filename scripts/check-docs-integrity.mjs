@@ -257,6 +257,8 @@ const FAST_DECAY = [
   "authentication/auth-md",
   "reference-links/models",
   "runtime-boundaries/durable-execution",
+  "agentic-ui/mcp-apps",
+  "agentic-ui/session-control",
   "protocols/*",
   "tooling-catalog/*",
 ];

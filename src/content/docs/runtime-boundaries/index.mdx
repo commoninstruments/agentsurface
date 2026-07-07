@@ -25,6 +25,10 @@ Agent architecture starts with a runtime boundary. The main question is not "whi
 | Browser session     | Web navigation, screenshots, extraction, UI actions               | Data is available through an API                         | Permissions, isolation, audit logs             |
 | Code sandbox        | Generated code, data transforms, notebooks, untrusted commands    | App server can safely run the code itself                | Secrets isolation, filesystem limits, teardown |
 
+## Section Pages
+
+- [Durable Execution](/docs/runtime-boundaries/durable-execution) — running non-deterministic agent loops inside durable workflow engines: model calls as replay-safe steps, checkpointing partial state, suspend/resume for approvals, and mid-run steering.
+
 ## Request-Bound Agents
 
 Use a request handler when the interaction is short and user-visible:
@@ -48,25 +52,14 @@ Do not hide multi-minute work inside a request. If the user needs progress, crea
 
 ## Background And Workflow Agents
 
-Use a worker or durable workflow when the task needs time, retries, or checkpoints:
+Use a worker or durable workflow when the task needs time, retries, checkpoints, or approval pauses — document ingestion, batch enrichment, scheduled recommendations, human approval before a costly action, long research, or any multi-step run that may pause and resume.
 
-- document ingestion and indexing
-- batch enrichment
-- scheduled recommendations
-- human approval before sending or purchasing
-- long research tasks
-- multi-step workflows that may pause and resume
+Split the responsibility: the workflow owns state transitions, retry and timeout policy, idempotency keys, approval state, and final notification; the agent inside owns judgment, extraction, synthesis, and language generation. The agent must not be the only place progress is tracked.
 
-The workflow should own:
+Two cases diverge here:
 
-- state transitions
-- retry policy
-- timeout policy
-- idempotency keys
-- human approval state
-- final notification
-
-Agents inside the workflow should own judgment, extraction, synthesis, or language generation. They should not be the only place where progress is tracked.
+- Short, idempotent, restart-from-scratch jobs — scheduling, batching, notification fan-out — are covered in [Autonomous Background Agents](/docs/cookbook/autonomous-background-agents).
+- Long runs where restarting from the beginning is unacceptable, because completed model calls are expensive or side effects are irreversible, need [Durable Execution](/docs/runtime-boundaries/durable-execution) — which handles the non-determinism-versus-replay problem a plain worker does not.
 
 ## Serverless Constraints
 
