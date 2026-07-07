@@ -13,7 +13,8 @@ npx skills add https://github.com/howells/agentsurface
 
 ## Audit History and Plans
 
-`docs/surface/` contains audit history and active transformation plans for this repository.
+`docs/surface/README.md` indexes the audit history and active transformation plans for this repository
+(the source documents live in `docs/` and `docs/arc/`).
 Check there before starting any audit or remediation work to avoid duplicating prior findings.
 
 ## Build Notes
