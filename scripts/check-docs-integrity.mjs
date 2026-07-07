@@ -164,7 +164,76 @@ for (const file of templateSourceFiles) {
   }
 }
 
-if (linkIssues.length === 0 && metaIssues.length === 0 && templateIssues.length === 0) {
+// Model-ID canonical-list check.
+//
+// reference-links/models.mdx is the single source of truth for model IDs used
+// in examples. Its code-formatted IDs (table cells + the anti-pattern allowlist
+// section) are parsed into an allowlist; every model-ID-shaped string elsewhere
+// in the docs MDX and the template kits must appear on it, or it is flagged as
+// drift. models.mdx itself is exempt (it defines the list).
+//
+// Calibration notes:
+// - Candidates are matched by provider-prefix shape, then filtered: a candidate
+//   that is not on the allowlist is only flagged when it contains a digit (a
+//   version marker). This excludes product/prose tokens that share a prefix but
+//   are not model IDs — claude-code, claude-md, claude-desktop, claude-agent-sdk,
+//   Claude-SearchBot / Claude-User (bot user-agents), Claude-specific/-native,
+//   gemini-api, gemini-pro, and bare claude-opus / claude-haiku family words.
+// - The o-series alternative (o1/o3/o4) inherently carries a digit, so it is
+//   flagged whenever present (the o-series is deprecated; none appear today).
+const MODEL_ID =
+  /\b(?:claude-[a-z0-9.-]+|gpt-[a-z0-9.-]+|gemini-[a-z0-9.-]+|voyage-[a-z0-9.-]+|text-embedding-[a-z0-9.-]+|o[134][a-z0-9-]*)\b/gi;
+
+const modelsDocPath = path.join(docsRoot, "reference-links/models.mdx");
+
+// Build the allowlist from code-formatted IDs in models.mdx only (inline `code`
+// spans and fenced ```code``` blocks), so prose mentions of retired IDs do not
+// silently allowlist them.
+const modelAllowlist = new Set();
+if (fs.existsSync(modelsDocPath)) {
+  const modelsDoc = fs.readFileSync(modelsDocPath, "utf-8");
+  const codeSpans = [
+    ...modelsDoc.matchAll(/```[\s\S]*?```/g),
+    ...modelsDoc.matchAll(/`([^`\n]+)`/g),
+  ].map((match) => match[0]);
+  for (const span of codeSpans) {
+    for (const idMatch of span.matchAll(MODEL_ID)) {
+      modelAllowlist.add(idMatch[0].toLowerCase());
+    }
+  }
+}
+
+const modelScanFiles = [
+  ...collectFiles(docsRoot, [".mdx"]).filter((file) => file !== modelsDocPath),
+  ...collectFiles(templatesRoot, [".ts", ".tsx", ".yaml", ".yml", ".json", ".md", ".mdc", ".txt"]),
+];
+
+const modelIssues = [];
+for (const file of modelScanFiles) {
+  const content = fs.readFileSync(file, "utf-8");
+  for (const match of content.matchAll(MODEL_ID)) {
+    const token = match[0].toLowerCase();
+    if (modelAllowlist.has(token)) {
+      continue;
+    }
+    // Only flag tokens that carry a version digit; prefix-sharing prose and
+    // product names (claude-code, gemini-api, …) have none.
+    if (!/\d/.test(token)) {
+      continue;
+    }
+    const line = content.slice(0, match.index).split("\n").length;
+    modelIssues.push(
+      `${path.relative(repoRoot, file)}:${line} — model ID not in canonical list: ${match[0]}`,
+    );
+  }
+}
+
+if (
+  linkIssues.length === 0 &&
+  metaIssues.length === 0 &&
+  templateIssues.length === 0 &&
+  modelIssues.length === 0
+) {
   console.log("docs integrity check passed");
   process.exit(0);
 }
@@ -186,6 +255,13 @@ if (metaIssues.length > 0) {
 if (templateIssues.length > 0) {
   console.error("Broken template citations:");
   for (const issue of templateIssues) {
+    console.error(`- ${issue}`);
+  }
+}
+
+if (modelIssues.length > 0) {
+  console.error("Model IDs not in canonical list (reference-links/models.mdx):");
+  for (const issue of modelIssues) {
     console.error(`- ${issue}`);
   }
 }
