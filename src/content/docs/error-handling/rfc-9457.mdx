@@ -5,7 +5,7 @@ description: The current standard for structured HTTP error responses that agent
 
 ## Summary
 
-RFC 9457 standardizes error response format with five core fields: type (stable URI), title, status, detail, instance. Agents branch on type, never on title or detail. Extensions like is_retriable, retry_after_seconds, suggestions, trace_id, doc_uri enable autonomous recovery.
+RFC 9457 standardizes error response format with five core fields: type (stable URI), title, status, detail, instance. Agents branch on type, never on title or detail. Extensions like is_retriable, retry_after_ms, suggestions, trace_id, doc_uri enable autonomous recovery.
 
 ```
 {
@@ -90,11 +90,20 @@ For practical purposes, both standards share the core five fields and the extens
 
 ## Recommended Extensions for Agent APIs
 
-The RFC explicitly allows extension fields beyond the five core ones. For agent-readable APIs, these extensions carry the structured recovery information agents need.
+The RFC explicitly allows extension fields beyond the five core ones. For agent-readable APIs, these extensions carry the structured recovery information agents need to decide whether to retry unchanged, modify and retry, or escalate. They are not part of the RFC itself, but follow its registry pattern for vendor-specific error metadata.
+
+| Field            | Type        | Purpose                                              |
+| ---------------- | ----------- | ---------------------------------------------------- |
+| `is_retriable`   | `boolean`   | Retry the same request unchanged?                    |
+| `retry_after_ms` | `number`    | Milliseconds to wait before retrying                 |
+| `doc_uri`        | `string`    | Link to detailed error documentation                 |
+| `trace_id`       | `string`    | Correlation ID for internal lookup                   |
+| `suggestions`    | `string[]`  | Ordered recovery steps (first is the most likely)    |
+| `errors`         | `Problem[]` | Nested Problem Details for batch / multi-field cases |
 
 ### `is_retriable`
 
-A boolean that explicitly tells the agent whether retrying the same request might succeed:
+A boolean that explicitly tells the agent whether retrying the same request unchanged might succeed. `false` marks a terminal error where the request itself is wrong — do not infer retriability from the status code alone:
 
 ```json
 {
@@ -103,13 +112,20 @@ A boolean that explicitly tells the agent whether retrying the same request migh
   "status": 503,
   "detail": "The invoices service is undergoing maintenance.",
   "is_retriable": true,
-  "retry_after_seconds": 30
+  "retry_after_ms": 30000
 }
 ```
 
-### `retry_after_seconds`
+### `retry_after_ms`
 
-How long to wait before retrying. Numeric equivalent of the `Retry-After` header, included in the body for clients that process the body but not headers:
+How long to wait before retrying, in milliseconds. It is the numeric equivalent of the `Retry-After` header, carried in the body for clients that process the body but not headers — and preferred over the header for parsing consistency. Agents can sleep on it directly:
+
+```typescript
+if (error.is_retriable && error.retry_after_ms) {
+  await sleep(error.retry_after_ms);
+  return retry();
+}
+```
 
 ```json
 {
@@ -118,13 +134,13 @@ How long to wait before retrying. Numeric equivalent of the `Retry-After` header
   "status": 429,
   "detail": "You have exceeded the 100 requests per minute limit.",
   "is_retriable": true,
-  "retry_after_seconds": 47
+  "retry_after_ms": 47000
 }
 ```
 
 ### `suggestions`
 
-An array of actionable next steps. Short, imperative strings describing what the agent should try:
+An array of actionable next steps, ordered so the first is the most likely fix. Short, imperative strings describing what the agent should try:
 
 ```json
 {
@@ -141,7 +157,7 @@ An array of actionable next steps. Short, imperative strings describing what the
 
 ### `doc_uri`
 
-A link to detailed documentation for this error type. Unlike `type`, which is a stable machine identifier, `doc_uri` may point to versioned docs or a troubleshooting guide:
+A link to detailed documentation for this error type. Unlike `type`, which is a stable machine identifier, `doc_uri` may point to versioned docs or a troubleshooting guide a human can follow up on:
 
 ```json
 {
@@ -155,7 +171,7 @@ A link to detailed documentation for this error type. Unlike `type`, which is a 
 
 ### `trace_id`
 
-A correlation ID linking this error to a specific request in the service's observability stack. When an agent escalates to a human, the human can look up the trace:
+A correlation ID linking this error to a specific request in the service's observability stack — server logs and OpenTelemetry spans. When an agent escalates to a human, the human or support team can look up the trace without reproducing the issue:
 
 ```json
 {
@@ -165,7 +181,155 @@ A correlation ID linking this error to a specific request in the service's obser
   "detail": "An unexpected error occurred. The issue has been logged.",
   "trace_id": "01HV3K8MNP2QRS3TUVWX",
   "is_retriable": true,
-  "retry_after_seconds": 5
+  "retry_after_ms": 5000
+}
+```
+
+### `errors`
+
+RFC 9457 allows aggregating multiple problems under an `errors` array — useful for batch operations or multi-field validation. Each element follows the same Problem Details schema, so an agent can recurse into it to recover per item:
+
+```json
+{
+  "type": "https://example.com/errors/batch-failure",
+  "title": "Batch operation partially failed",
+  "status": 422,
+  "detail": "3 of 5 items failed validation",
+  "errors": [
+    {
+      "type": "https://example.com/errors/validation-error",
+      "detail": "Item 0: 'amount' is required",
+      "is_retriable": true
+    },
+    {
+      "type": "https://example.com/errors/validation-error",
+      "detail": "Item 2: 'currency' is invalid",
+      "is_retriable": true
+    }
+  ]
+}
+```
+
+## Validating Problem Details
+
+A single schema keeps error responses consistent across API handlers and CLI output. This Zod schema covers the core fields plus the agent extensions:
+
+```typescript
+import { z } from "zod";
+
+const ProblemDetails = z.object({
+  type: z.string().url().optional().default("about:blank"),
+  title: z.string(),
+  status: z.number().int().min(400).max(599),
+  detail: z.string(),
+  instance: z.string().optional(),
+  is_retriable: z.boolean().optional(),
+  retry_after_ms: z.number().int().optional(),
+  doc_uri: z.string().url().optional(),
+  trace_id: z.string().optional(),
+  suggestions: z.array(z.string()).optional(),
+  errors: z.array(z.lazy(() => ProblemDetails)).optional(),
+});
+
+type ErrorResponse = z.infer<typeof ProblemDetails>;
+```
+
+See [`templates/errors-and-auth/problem-details.ts`](/templates/errors-and-auth/problem-details.ts) for a production-ready implementation.
+
+## Handling Problem Details in an Agent
+
+Agents branch twice: first on `type` to identify which error occurred (shown above), then on `is_retriable` to decide what to do about it. The recovery branch reads the extension fields:
+
+```typescript
+async function callTool(tool: string, params: Record<string, unknown>): Promise<unknown> {
+  const response = await fetch(`/api/tools/${tool}`, {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    if (error.is_retriable === false) {
+      // Terminal error — escalate or fail the task
+      throw new Error(`${error.title}: ${error.detail}. See ${error.doc_uri}`);
+    }
+
+    if (error.is_retriable && error.retry_after_ms) {
+      // Transient error with explicit wait time
+      await sleep(error.retry_after_ms);
+      return callTool(tool, params); // Retry unchanged
+    }
+
+    if (error.suggestions && error.suggestions.length > 0) {
+      // Recoverable with modification — agent rewrites params
+      // (implementation depends on agent framework)
+    }
+  }
+
+  return response.json();
+}
+```
+
+## Batch Error Aggregation
+
+When processing multiple items, return partial success with per-item errors under the `errors` array rather than failing the whole batch:
+
+```typescript
+async function batchCreateInvoices(invoices: InvoiceData[]): Promise<Response> {
+  const results = [];
+  const errors = [];
+
+  for (let i = 0; i < invoices.length; i++) {
+    try {
+      results.push(await createInvoice(invoices[i]));
+    } catch (err) {
+      errors.push({
+        type: "https://example.com/errors/validation-error",
+        title: "Validation failed",
+        status: 422,
+        detail: `Item ${i}: ${err.message}`,
+        instance: `batch-item-${i}`,
+        is_retriable: true,
+      });
+    }
+  }
+
+  if (errors.length > 0) {
+    return Response.json(
+      {
+        type: "https://example.com/errors/batch-failure",
+        title: "Batch operation partially failed",
+        status: 207, // Multi-status
+        detail: `${results.length} succeeded, ${errors.length} failed`,
+        errors,
+      },
+      { status: 207 },
+    );
+  }
+
+  return Response.json(results);
+}
+```
+
+## Cancellation and Intent Tracing
+
+When an agent cancels an in-flight request, the error can carry an `intent` object describing the operation's state so the agent can reason about cleanup instead of blindly retrying:
+
+```json
+{
+  "type": "https://example.com/errors/operation-cancelled",
+  "title": "Operation Cancelled",
+  "status": 408,
+  "detail": "Request aborted by client after 5000ms",
+  "trace_id": "span-xyz789",
+  "is_retriable": true,
+  "intent": {
+    "operation": "create_invoice",
+    "resource_id": "inv-pending-123",
+    "state_before_cancel": "payment_processing",
+    "recovery": "Operation may be in progress server-side. Poll GET /invoices/inv-pending-123 to check status."
+  }
 }
 ```
 
@@ -189,6 +353,6 @@ function problemResponse(res: Response, status: number, problem: ProblemDetails)
 
 ## Related Pages
 
-- [Agent Extensions](/docs/error-handling/agent-extensions) — agent-specific fields beyond RFC 9457
 - [Designing Errors for Agent Recovery](/docs/error-handling/errors-for-agents) — structuring error content to enable recovery
 - [Retry Patterns](/docs/error-handling/retry-patterns) — how agents should act on error information
+- [Templates: Problem Details Schema](/templates/errors-and-auth/problem-details.ts) — Zod implementation
