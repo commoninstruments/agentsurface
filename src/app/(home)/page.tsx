@@ -134,6 +134,48 @@ const references = [
   },
 ];
 
+const agentSurface = [
+  { href: "/llms.txt", path: "llms.txt", role: "section index" },
+  { href: "/llms-full.txt", path: "llms-full.txt", role: "every page, inlined" },
+  { href: "/AGENTS.md", path: "AGENTS.md", role: "repo map" },
+  { href: "/mcp", path: "/mcp", role: "search + fetch tools" },
+  {
+    href: "/.well-known/mcp/server-card.json",
+    path: ".well-known/mcp",
+    role: "server card",
+  },
+];
+
+function AgentSurfacePanel() {
+  return (
+    <aside className="mt-12 lg:mt-2">
+      <p className="text-xs leading-5 text-fd-muted-foreground">
+        This site is agent-readable itself. Its own surface:
+      </p>
+      <ul className="mt-4 divide-y divide-fd-border border-y border-fd-border">
+        {agentSurface.map((row) => (
+          <li key={row.path}>
+            <a
+              href={row.href}
+              className="group flex items-baseline justify-between gap-4 py-2.5 transition-colors hover:text-fd-foreground"
+            >
+              <span className="font-mono text-[0.8125rem] text-fd-foreground underline-offset-4 group-hover:underline">
+                {row.path}
+              </span>
+              <span className="shrink-0 text-xs text-fd-muted-foreground">{row.role}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 text-xs leading-5 text-fd-muted-foreground">
+        Every <span className="font-mono text-[0.8125rem]">/docs</span> page also returns Markdown
+        when a request sends{" "}
+        <span className="font-mono text-[0.8125rem]">Accept: text/markdown</span>.
+      </p>
+    </aside>
+  );
+}
+
 function LinkList({ items }: { items: { title: string; desc: string; href: string }[] }) {
   return (
     <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,30 +214,38 @@ export default function HomePage() {
   return (
     <main className="flex flex-col items-center bg-fd-background text-fd-foreground">
       <section className="w-full max-w-5xl px-6 pb-14 pt-16 sm:px-10">
-        <p className="mb-4 font-mono text-xs text-fd-muted-foreground">agent-readable software</p>
-        <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
-          A field guide for software that agents can use.
-        </h1>
-        <p className="mt-6 max-w-2xl text-[0.9375rem] leading-7 text-fd-muted-foreground">
-          Agent Surface explains how agents read context, call tools, retrieve knowledge, handle
-          errors, ask for approval, and coordinate work. Use it to design agent systems, expose
-          existing products to agents, score readiness, and choose protocols or tools with the
-          engineering detail intact.
-        </p>
+        <div className="grid items-start gap-y-4 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-x-16">
+          <div>
+            <p className="mb-4 font-mono text-xs text-fd-muted-foreground">
+              agent-readable software
+            </p>
+            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
+              A field guide for software that agents can use.
+            </h1>
+            <p className="mt-6 max-w-2xl text-[0.9375rem] leading-7 text-fd-muted-foreground">
+              Agent Surface explains how agents read context, call tools, retrieve knowledge, handle
+              errors, ask for approval, and coordinate work. Use it to design agent systems, expose
+              existing products to agents, score readiness, and choose protocols or tools with the
+              engineering detail intact.
+            </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/docs"
-            className="inline-flex h-10 items-center rounded-md bg-fd-primary px-5 text-sm font-medium text-fd-primary-foreground transition-colors hover:bg-fd-primary/90"
-          >
-            Start the guide
-          </Link>
-          <Link
-            href="/docs/getting-started"
-            className="inline-flex h-10 items-center rounded-md border border-fd-border px-5 text-sm font-medium text-fd-muted-foreground transition-colors hover:border-fd-ring hover:text-fd-foreground"
-          >
-            Choose a path
-          </Link>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/docs"
+                className="inline-flex h-10 items-center rounded-md bg-fd-primary px-5 text-sm font-medium text-fd-primary-foreground transition-colors hover:bg-fd-primary/90"
+              >
+                Start the guide
+              </Link>
+              <Link
+                href="/docs/getting-started"
+                className="inline-flex h-10 items-center rounded-md border border-fd-border px-5 text-sm font-medium text-fd-muted-foreground transition-colors hover:border-fd-ring hover:text-fd-foreground"
+              >
+                Choose a path
+              </Link>
+            </div>
+          </div>
+
+          <AgentSurfacePanel />
         </div>
       </section>
 
