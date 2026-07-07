@@ -52,6 +52,26 @@ Each dimension scores from 0 to 3:
 
 **11. Data Retrievability** — Whether project knowledge, documents, and user data are searchable and retrievable by agents. Semantic search, hybrid retrieval, reranking, metadata filters, RAG evals, and knowledge graphs.
 
+## Scored Dimensions vs Reference Sections
+
+Not every section of Agent Surface is a scored dimension. The eleven dimensions map onto the agent-readable-surface sections a codebase can be measured against; the remaining sections are reference and conceptual material that inform the score without being scored themselves.
+
+| Scored dimension    | Docs section                                     |
+| ------------------- | ------------------------------------------------ |
+| API Surface         | [API Surface](/docs/api-surface)                 |
+| CLI Design          | [CLI Design](/docs/cli-design)                   |
+| MCP Server          | [MCP Servers](/docs/mcp-servers)                 |
+| Discovery & AEO     | [Discovery](/docs/discovery)                     |
+| Authentication      | [Authentication](/docs/authentication)           |
+| Error Handling      | [Error Handling](/docs/error-handling)           |
+| Tool Design         | [Tool Design](/docs/tool-design)                 |
+| Context Files       | [Context Files](/docs/context-files)             |
+| Multi-Agent         | [Multi-Agent](/docs/multi-agent)                 |
+| Testing             | [Testing](/docs/testing)                         |
+| Data Retrievability | [Data Retrievability](/docs/data-retrievability) |
+
+The following sections are reference and conceptual — they shape how you design and audit agent systems but are **not** scored dimensions: [Agents](/docs/agents), [Agentic UI](/docs/agentic-ui), [Runtime Boundaries](/docs/runtime-boundaries), [Cookbook](/docs/cookbook), [Protocols](/docs/protocols), [Reference Links](/docs/reference-links), [Tooling Catalog](/docs/tooling-catalog), and this Scoring section itself. If you are looking for a section in the score and cannot find it, it is almost certainly one of these.
+
 ## Confidence Levels
 
 Every score includes a confidence marker:
