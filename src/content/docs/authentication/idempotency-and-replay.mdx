@@ -90,77 +90,9 @@ The Redis `NX` flag ensures the JTI is only set once. If the key already exists,
 
 ## Idempotency Keys for Mutation Operations
 
-Idempotency keys are client-generated identifiers that prevent double-submission of write operations. If a request is retried due to network failure, timeout, or connection loss, the server recognizes it as the same logical operation and does not execute it twice.
+Idempotency keys are client-generated identifiers that prevent double-submission of write operations. If a request is retried due to network failure, timeout, or connection loss, the server recognizes the same logical operation and returns the cached response instead of executing twice. The client sends an `Idempotency-Key` header alongside its `Authorization` and `DPoP` headers; the server caches only successful (2xx) responses for a window — typically 24 hours — so failed requests stay retriable. Generate keys as UUIDv7 so the embedded timestamp lets old keys expire naturally, and log them for audit trails.
 
-Clients include an `Idempotency-Key` header:
-
-```bash
-POST /payments HTTP/1.1
-Host: api.example.com
-Authorization: Bearer ...
-Idempotency-Key: idempotency_01HV3K8MNP
-Content-Type: application/json
-
-{
-  "amount": 10000,
-  "currency": "usd",
-  "description": "Invoice payment"
-}
-```
-
-Servers store a mapping of `Idempotency-Key` → response for a limited time (typically 24 hours). On subsequent requests with the same key, the server returns the cached response without re-executing.
-
-```typescript
-import redis from "redis";
-
-const redisClient = redis.createClient();
-const IDEMPOTENCY_TTL = 24 * 60 * 60; // 24 hours
-
-async function handlePayment(req: Request): Promise<Response> {
-  const idempotencyKey = req.headers.get("Idempotency-Key");
-  if (!idempotencyKey) {
-    return Response.json({ error: "Idempotency-Key header is required" }, { status: 400 });
-  }
-
-  // Check if this request has been seen before
-  const cacheKey = `idempotency:${idempotencyKey}`;
-  const cachedResponse = await redisClient.get(cacheKey);
-  if (cachedResponse) {
-    return Response.json(JSON.parse(cachedResponse), { status: 200 });
-  }
-
-  // Process the payment
-  const body = await req.json();
-  let result;
-  try {
-    result = await processPayment(body);
-  } catch (err) {
-    // Do NOT cache error responses (allow retry)
-    throw err;
-  }
-
-  // Cache the successful response
-  await redisClient.set(cacheKey, JSON.stringify(result), { EX: IDEMPOTENCY_TTL });
-
-  return Response.json(result, { status: 200 });
-}
-
-async function processPayment(data: { amount: number; currency: string; description: string }) {
-  // Execute payment logic
-  return {
-    transaction_id: "txn_01HV3K8MNP",
-    status: "completed",
-    amount: data.amount,
-  };
-}
-```
-
-Key behaviors:
-
-- Only cache **successful** responses (2xx status). Allow retries on errors so the client can try again.
-- Cache for a long duration (24 hours) to handle delayed retries.
-- Generate idempotency keys as UUIDv7 or similar (include timestamp so old keys eventually expire naturally).
-- Log the key for audit trails.
+The full key-generation, storage, and TTL mechanism — including the production Redis handler — lives on the [Idempotency](/docs/error-handling/idempotency) page. What matters at the authentication layer is how this mechanism composes with DPoP replay protection, below.
 
 ## Combining DPoP and Idempotency
 

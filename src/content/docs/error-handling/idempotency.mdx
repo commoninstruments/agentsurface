@@ -14,6 +14,7 @@ Retry:          Idempotency-Key: abc123 → returns cached response
 ```
 
 - Generate key once per logical operation, not per attempt
+- Prefer UUIDv7 keys — the embedded timestamp lets old keys expire naturally
 - Send same key on every retry of the same logical operation
 - Server caches only successful responses (2xx), not errors
 - Cache with 24-hour TTL (allow delayed retries)

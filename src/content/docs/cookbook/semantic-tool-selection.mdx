@@ -7,7 +7,7 @@ description: At >20 tools, use embedding-based selection. Pick ~12 per turn with
 
 Passing 50+ tool definitions to the model per request wastes tokens and dilutes focus. Semantic tool selection uses embeddings to pick ~12 relevant tools per turn based on the user's message. The "toolpick" pattern: embed tool descriptions once at startup, cache them, then at each step use cosine similarity to rank tools and pass only the top candidates.
 
-- **20-tool threshold**: Beyond 20 tools, token cost of listing all tools + context loss > benefit of pre-loaded tools.
+- **Threshold**: Past ~20 tools, prefer per-turn selection over pre-loading — see [Tool Curation](/docs/tool-design/tool-curation) for why accuracy degrades and what other strategies exist.
 - **~12 tools per turn**: Good starting point; tune against your tool set, model, and evals.
 - **"Always active" set**: Small, critical tools (web_search, search_tools, meta-tools) always available.
 - **Embedding cache**: Compute embeddings once at startup; reuse across requests (Redis or file cache).
@@ -36,7 +36,7 @@ const agent = new ToolLoopAgent({
 });
 ```
 
-**Cost**: ~500 tokens listing tool definitions alone. The model wastes context parsing irrelevant tools (order tools when asking about customers).
+**Cost**: ~500 tokens listing tool definitions alone, and the model wastes context parsing irrelevant tools (order tools when asking about customers). Why accuracy degrades past ~20 tools, and the role-based and keyword strategies that complement embeddings, live in [Tool Curation](/docs/tool-design/tool-curation) — this recipe is the applied embedding-based implementation.
 
 ---
 

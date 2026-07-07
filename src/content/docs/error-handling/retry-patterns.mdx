@@ -250,69 +250,9 @@ class RateLimitAwareClient {
 
 ## Idempotency Keys
 
-An agent retrying a write operation without idempotency guarantees risks creating duplicate resources. An invoice creation that is retried after a network timeout might create two invoices if the first request actually succeeded before the connection dropped.
+Retries and idempotency are inseparable: an agent retrying a write operation without an idempotency guarantee risks creating duplicate resources — an invoice creation retried after a network timeout can create two invoices if the first request succeeded before the connection dropped. The rule for any retry loop is that every write it may re-issue must carry an `Idempotency-Key`, generated once per logical operation and sent unchanged on each attempt, so the server can deduplicate.
 
-Idempotency keys prevent this. The client generates a unique key per logical operation and includes it in every retry. The server deduplicates — if a request with a given key has already been processed, it returns the original response without executing the operation again.
-
-```typescript
-import { randomUUID } from "crypto";
-
-// Generate key once per logical operation, not per attempt
-const idempotencyKey = randomUUID();
-
-async function createInvoiceIdempotent(
-  data: InvoiceData,
-  key: string = randomUUID(),
-): Promise<Invoice> {
-  return withRetry(async () => {
-    const response = await fetch("https://api.example.com/invoices", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Idempotency-Key": key, // Same key on every retry
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new ApiError(error);
-    }
-
-    return response.json();
-  });
-}
-```
-
-The server's idempotency implementation stores the response keyed by the idempotency key with a TTL (typically 24 hours):
-
-```typescript
-async function handleCreateInvoice(req: Request, res: Response) {
-  const idempotencyKey = req.headers["idempotency-key"];
-
-  if (idempotencyKey) {
-    const cached = await idempotencyStore.get(idempotencyKey);
-    if (cached) {
-      // Return the original response — do not execute again
-      return res.status(cached.status).json(cached.body);
-    }
-  }
-
-  const invoice = await createInvoice(req.body);
-
-  if (idempotencyKey) {
-    await idempotencyStore.set(idempotencyKey, {
-      status: 201,
-      body: invoice,
-      ttl: 24 * 60 * 60, // 24 hours
-    });
-  }
-
-  res.status(201).json(invoice);
-}
-```
-
-Idempotency keys are most critical for payment operations, invoice creation, and any operation that consumes a limited resource or triggers an external side effect (email, SMS, webhook).
+The key-generation, server-side storage, 24-hour TTL, and replay semantics are documented in full on the [Idempotency](/docs/error-handling/idempotency) page. Idempotency keys matter most for payments, invoice creation, and any operation that consumes a limited resource or triggers an external side effect (email, SMS, webhook).
 
 ## Distinguishing Retriable from Non-Retriable Errors
 

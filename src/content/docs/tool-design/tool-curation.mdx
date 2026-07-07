@@ -211,6 +211,12 @@ const result = await generateText({
 });
 ```
 
+### Embedding-Based Selection
+
+BM25 matches on keywords; embedding-based selection ranks tools by semantic similarity between the user's message and each tool description, catching relevant tools even when the wording differs. Embed every tool description once at startup, cache the vectors, then at each step select the top candidates by cosine similarity — roughly 12 per turn is a good starting point, tuned against your tool set and evals. Pair it with a small "always-active" set of critical tools (web search, a `search_tools` meta-tool) that bypass ranking, so the agent can always discover what selection missed.
+
+The applied production walkthrough — the `toolpick` library, the Vercel AI SDK `prepareStep` hook, embedding caches, and cross-tool dependency maps — is in [Semantic Tool Selection at Scale](/docs/cookbook/semantic-tool-selection).
+
 ## Read-Only vs Mutating Kits
 
 Distinguish safe (read) from risky (write) tools:
