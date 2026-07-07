@@ -1,6 +1,7 @@
 ---
 title: Data Retrievability
 description: How your codebase makes data searchable, retrievable, and understandable to agents
+lastVerified: 2026-06-02
 ---
 
 import { Card, Cards } from "fumadocs-ui/components/card";
@@ -8,8 +9,6 @@ import { Card, Cards } from "fumadocs-ui/components/card";
 Data Retrievability is how effectively your codebase enables agents to find, understand, and retrieve information. This includes RAG pattern selection, embeddings, vector stores, hybrid retrieval, reranking, chunking, knowledge graphs, agentic query planning, and evaluation loops.
 
 ## Summary
-
-Freshness note: last reviewed 2026-06-02. Retrieval model names, vendor pricing, benchmark ranks, and managed database features move quickly; verify current provider docs before treating any model or product mention as current.
 
 The durable pattern is stable: production systems should usually combine sparse keyword retrieval, dense semantic retrieval, metadata filters, reranking, bounded context assembly, and evaluation. Dense-only vector search is a useful prototype baseline, but it is rarely enough for agent workflows that depend on exact identifiers, permissions, citations, and multi-step reasoning.
 
