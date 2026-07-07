@@ -104,7 +104,7 @@ Format: [DECISION] [optional context]`;
   const response = await anthropic.messages.create({
     max_tokens: 800,
     messages: [...state.messages, { role: "user", content: userMessage }],
-    model: "claude-opus-4-7",
+    model: "claude-opus-4-8",
     system: systemPrompt,
   });
 
@@ -156,7 +156,7 @@ Format: [DECISION] [reason]`;
   const response = await anthropic.messages.create({
     max_tokens: 500,
     messages: [...state.messages, { role: "user", content: userMessage }],
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     system: systemPrompt,
   });
 
@@ -203,7 +203,7 @@ Format: [DECISION] [reason]`;
   const response = await anthropic.messages.create({
     max_tokens: 300,
     messages: [...state.messages, { role: "user", content: userMessage }],
-    model: "claude-opus-4-7",
+    model: "claude-opus-4-8",
     system: systemPrompt,
   });
 

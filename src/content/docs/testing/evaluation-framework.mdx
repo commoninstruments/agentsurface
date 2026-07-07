@@ -211,7 +211,7 @@ Model-based graders use an LLM to evaluate outputs that cannot be graded by rule
 async def model_grade_plan(
     task: str,
     plan: list[str],
-    grader_model: str = "claude-sonnet-4-6"
+    grader_model: str = "claude-sonnet-5"
 ) -> GradeResult:
     prompt = f"""
 You are grading whether an agent produced a correct plan for a task.

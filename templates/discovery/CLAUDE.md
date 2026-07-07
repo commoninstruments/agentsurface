@@ -8,7 +8,7 @@ When to use: When you want Claude Code to behave differently from other tools re
 If there are no Claude-specific overrides needed, omit this file.
 
 What to customize:
-1. Model selection (claude-opus-4-7, claude-sonnet-4-6, etc.)
+1. Model selection (claude-opus-4-8, claude-sonnet-5, etc.)
 2. Subagents (path to .claude/agents/*.md files)
 3. MCP servers (remote servers, local stdio servers)
 4. Skills (scoped to project)
@@ -34,14 +34,14 @@ This file documents Claude Code-specific settings only.
 
 ## Model selection
 
-**Default:** `claude-opus-4-7` for agent-related tasks (high reasoning, tool use, code generation).
+**Default:** `claude-opus-4-8` for agent-related tasks (high reasoning, tool use, code generation).
 
 **Override for specific tasks:**
 
-- Lightweight refactoring, docs: `claude-sonnet-4-6`
+- Lightweight refactoring, docs: `claude-sonnet-5`
 - Very fast turnaround (prototypes): `claude-haiku-4-5-20251001`
 
-Use the `model:` override in the prompt when needed; otherwise, Claude Code defaults to Opus 4.7.
+Use the `model:` override in the prompt when needed; otherwise, Claude Code defaults to Opus 4.8.
 
 ---
 
@@ -69,7 +69,7 @@ Subagents are ephemeral, isolated contexts for side tasks. Use to keep parent co
 
 - Task is orthogonal (review, testing, type-checking)
 - Parent context is already large
-- You want cheaper model (Sonnet 4.6) for side task
+- You want cheaper model (Sonnet 5) for side task
 - You need permission boundary (read-only for reviewer)
 
 ---
@@ -141,7 +141,7 @@ Invoke: `/schema-validate`, `/test-summary`, etc.
 
 ## Extended thinking
 
-Claude Code supports extended thinking on Opus 4.7 (adaptive reasoning).
+Claude Code supports extended thinking on Opus 4.8 (adaptive reasoning).
 
 Enable for complex tasks:
 
@@ -209,8 +209,8 @@ in Claude's type-checking pass. Workaround: Use `.parse()` before tool call; Cla
 **Monorepo filter commands:** `pnpm --filter=@acme/api dev` works in Claude Code terminal, but
 IDE debugging (breakpoints) only works if you `cd packages/api/` first.
 
-**Extended thinking token count:** Thinking tokens count toward your 1M-token context on Opus 4.7.
-For long thinking sessions, use `model: claude-sonnet-4-6` to save on cost (no thinking).
+**Extended thinking token count:** Thinking tokens count toward your 1M-token context on Opus 4.8.
+For long thinking sessions, use `model: claude-sonnet-5` to save on cost (no thinking).
 
 ---
 

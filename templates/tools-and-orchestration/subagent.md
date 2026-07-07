@@ -1,7 +1,7 @@
 ---
 name: test-runner
 description: A specialist agent for executing tests and reporting results
-model: claude-sonnet-4-6
+model: claude-sonnet-5
 tools:
   - bash_run_tests
   - bash_check_coverage

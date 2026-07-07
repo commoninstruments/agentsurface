@@ -331,7 +331,7 @@ export async function runHandoffExample() {
  * - Reviewer's output is final result to user
  *
  * Pattern 3: Cost optimization
- * - Simple tasks: use cheap agent (gpt-5.4-mini)
- * - Escalate to premium agent (gpt-5.4) if needed
+ * - Simple tasks: use cheap agent (gpt-5.4)
+ * - Escalate to premium agent (gpt-5.5) if needed
  * - Example: writer-mini generates draft -> editor (full model) refines
  */

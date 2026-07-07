@@ -22,7 +22,7 @@ const DEFAULTS: Record<Provider, string> = {
   google: "gemini-2.5-flash",
   openrouter: "google/gemini-2.5-flash",
   anthropic: "claude-sonnet-4-6",
-  openai: "gpt-4.1-mini",
+  openai: "gpt-5.4",
 };
 
 export function agentModel(overrideModel?: string) {
@@ -193,8 +193,8 @@ const TIER_MODELS: Record<Provider, Record<Tier, string>> = {
     rigorous: "anthropic/claude-opus-4-6",
   },
   openai: {
-    quick: "gpt-4.1-mini",
-    standard: "gpt-4.1",
+    quick: "gpt-5.4",
+    standard: "gpt-5.5",
     rigorous: "o3",
   },
 };

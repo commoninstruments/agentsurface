@@ -59,7 +59,7 @@ Is this summary coherent and complete?
 Summary: ${output}
 Expected tone: ${expected}
     `,
-    model: "claude-opus-4-7",
+    model: "claude-opus-4-8",
   });
 
   return grade.score;
@@ -140,7 +140,7 @@ async function compareModels() {
   const opusResults = await Braintrust.eval({
     projectName: "model_comparison",
     metadata: {
-      model: "claude-opus-4-7",
+      model: "claude-opus-4-8",
       promptVersion: "v1",
     },
     data: () => dataset.fetch(),
@@ -148,7 +148,7 @@ async function compareModels() {
       const response = await fetch("https://api.anthropic.com/messages", {
         method: "POST",
         body: JSON.stringify({
-          model: "claude-opus-4-7",
+          model: "claude-opus-4-8",
           messages: [{ role: "user", content: input.text }],
         }),
       });
@@ -213,7 +213,7 @@ async function tracedTask(input) {
       name: "summarize",
     },
     async (span) => {
-      span.setTag("model", "claude-opus-4-7");
+      span.setTag("model", "claude-opus-4-8");
       span.setTag("input_length", input.text.length);
 
       const summary = await agent.summarize(input.text);

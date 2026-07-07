@@ -240,20 +240,20 @@ Usage:
 // Audit agent — read-only
 const auditAgent = agent({
   tools: readOnlyKit.tools.map((name) => toolRegistry[name]),
-  model: "claude-sonnet-4-6",
+  model: "claude-sonnet-5",
 });
 
 // Data migration — read + write
 const migrationAgent = agent({
   tools: mutatingKit.tools.map((name) => toolRegistry[name]),
-  model: "claude-opus-4-7",
+  model: "claude-opus-4-8",
   requiresHumanApproval: true,
 });
 
 // Admin — dangerous operations (requires approval)
 const adminAgent = agent({
   tools: dangerousKit.tools.map((name) => toolRegistry[name]),
-  model: "claude-opus-4-7",
+  model: "claude-opus-4-8",
   requiresHumanApproval: (toolName) => toolRegistry[toolName].category === "dangerous",
 });
 ```

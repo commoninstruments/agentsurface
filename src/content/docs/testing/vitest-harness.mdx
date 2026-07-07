@@ -44,7 +44,7 @@ describe("Agent Evals", () => {
 
   beforeEach(() => {
     agent = new MyAgent({
-      model: "claude-opus-4-7",
+      model: "claude-opus-4-8",
       temperature: 0, // Deterministic for evals
       maxRetries: 1,
     });
@@ -117,7 +117,7 @@ For reproducibility, pin the LLM seed. Most providers support `seed` parameter:
 
 ```typescript
 const agent = new MyAgent({
-  model: "claude-opus-4-7",
+  model: "claude-opus-4-8",
   seed: 12345, // Fixed seed for reproducible routing
   temperature: 0,
 });
@@ -286,7 +286,7 @@ const agentRouting = new MyAgent({
 });
 
 const agentQuality = new MyAgent({
-  model: "claude-opus-4-7",
+  model: "claude-opus-4-8",
 });
 
 // Routing tests: fast + cheap

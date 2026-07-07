@@ -182,7 +182,7 @@ paths:
           request:
             name: "Support Analyzer"
             description: "Analyzes support tickets for sentiment and urgency"
-            model: "claude-opus-4-7"
+            model: "claude-opus-4-8"
       x-openai-isConsequential: false
 
   /agents/{agent_id}:
@@ -461,8 +461,8 @@ components:
           example: "Analyzes support tickets for sentiment and priority"
         model:
           type: string
-          enum: [claude-opus-4-7, claude-sonnet-4-6, claude-haiku-4-5-20251001]
-          example: "claude-opus-4-7"
+          enum: [claude-opus-4-8, claude-sonnet-5, claude-haiku-4-5-20251001]
+          example: "claude-opus-4-8"
         status:
           type: string
           enum: [draft, active, archived]
@@ -506,8 +506,8 @@ components:
           example: "Analyzes support tickets"
         model:
           type: string
-          enum: [claude-opus-4-7, claude-sonnet-4-6, claude-haiku-4-5-20251001]
-          example: "claude-opus-4-7"
+          enum: [claude-opus-4-8, claude-sonnet-5, claude-haiku-4-5-20251001]
+          example: "claude-opus-4-8"
         tools:
           type: array
           items:

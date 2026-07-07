@@ -36,7 +36,7 @@ Research from Zheng et al. (MT-Bench) and Anthropic's evaluation posts identifie
 
 ### Self-preference bias
 
-A judge model tends to prefer outputs from itself or similar models. If you use GPT-5.4 to judge outputs from Claude Opus 4.7, the judge may systematically overrate outputs that look like GPT-style reasoning.
+A judge model tends to prefer outputs from itself or similar models. If you use GPT-5.4 to judge outputs from Claude Opus 4.8, the judge may systematically overrate outputs that look like GPT-style reasoning.
 
 **Mitigation:** Use a judge from a different model family and calibrate it against human-labeled examples. For pairwise comparisons, run at least some cross-provider checks so style similarity does not become a hidden scoring advantage.
 
@@ -150,7 +150,7 @@ async function calibratedJudge(
     .join("\n\n");
 
   const score = await callLLM({
-    model: "claude-opus-4-7",
+    model: "claude-opus-4-8",
     prompt: `
 You are grading agent outputs on a scale of 0-1.
 
@@ -233,7 +233,7 @@ async function pairwiseRank(
       : [outputB, outputA, "B", "A"];
 
     const result = await callLLM({
-      model: "claude-opus-4-7",
+      model: "claude-opus-4-8",
       prompt: `
 Task: ${task}
 
@@ -262,7 +262,7 @@ Which is better? Respond with only "1", "2", or "tie".
 
 LLM judges are expensive at scale. Strategies to reduce cost:
 
-- **Use cheaper judges for pre-screening.** Haiku 4.5 for initial triage, then Opus 4.7 for borderline cases.
+- **Use cheaper judges for pre-screening.** Haiku 4.5 for initial triage, then Opus 4.8 for borderline cases.
 - **Batch evaluation.** Ask a judge to score 10 outputs in a single prompt instead of 10 separate API calls.
 - **Threshold-based fallback.** If code-based heuristics give a score of 0.95 or 0.05, don't invoke LLM judge.
 - **Sample-based calibration.** Calibrate on 30 examples, then use cheaper model + heuristics for the remaining 1000.
