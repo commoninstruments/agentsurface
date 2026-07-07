@@ -5,6 +5,7 @@
     "design-principles",
     "framework-selection",
     "anthropic-platform",
-    "browser-access"
+    "browser-access",
+    "runtime-guardrails"
   ]
 }

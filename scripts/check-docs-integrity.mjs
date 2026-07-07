@@ -251,10 +251,12 @@ const FAST_DECAY = [
   "data-retrievability/vector-databases",
   "data-retrievability/index",
   "agents/anthropic-platform",
+  "agents/runtime-guardrails",
   "testing/observability",
   "testing/promptfoo",
   "authentication/auth-md",
   "reference-links/models",
+  "runtime-boundaries/durable-execution",
   "protocols/*",
   "tooling-catalog/*",
 ];
