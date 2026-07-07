@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteHeader() {
   return (
@@ -22,6 +23,7 @@ export function SiteHeader() {
           >
             GitHub
           </a>
+          <ThemeToggle className="ml-1" />
         </nav>
       </div>
     </header>
