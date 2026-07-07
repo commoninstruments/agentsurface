@@ -64,6 +64,8 @@ specialist-agents:
   - test-writer
   - retrievability-engineer
   - agentic-patterns-writer
+  - tool-design-writer
+  - multi-agent-writer
 
 # Distribution URLs (for future registry lookup)
 distribution:

@@ -145,6 +145,8 @@ See [`skills/surface/SKILL.md`](./skills/surface/SKILL.md) for the operative wor
 - `test-writer`
 - `retrievability-engineer`
 - `agentic-patterns-writer`
+- `tool-design-writer`
+- `multi-agent-writer`
 
 These agents are used to apply focused fixes after the audit identifies the highest-impact gaps.
 
