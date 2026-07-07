@@ -252,6 +252,7 @@ const FAST_DECAY = [
   "data-retrievability/index",
   "agents/anthropic-platform",
   "agents/runtime-guardrails",
+  "agents/sandboxes-and-workspaces",
   "testing/observability",
   "testing/promptfoo",
   "authentication/auth-md",

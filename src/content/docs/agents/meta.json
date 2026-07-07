@@ -6,6 +6,7 @@
     "framework-selection",
     "anthropic-platform",
     "browser-access",
+    "sandboxes-and-workspaces",
     "runtime-guardrails"
   ]
 }

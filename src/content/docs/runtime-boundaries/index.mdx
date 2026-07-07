@@ -98,7 +98,7 @@ Avoid edge when:
 
 Browser and sandbox access should be separate runtime boundaries, not casual tools inside the main app server.
 
-Minimum controls:
+Minimum controls apply to both:
 
 - allowlisted domains, commands, and network targets
 - wall-clock and token budgets
@@ -109,6 +109,8 @@ Minimum controls:
 - deterministic teardown
 
 Prefer APIs over browsers when APIs exist. Prefer deterministic transforms over generated code when the transform is known.
+
+Choosing which browser surface to grant, and how to bound it, is covered in [Browser Access](/docs/agents/browser-access). Deciding whether an agent needs a sandbox at all, how strong its isolation must be, and when it graduates to a persistent workspace is covered in [Sandboxes and Workspaces](/docs/agents/sandboxes-and-workspaces).
 
 ## Runtime Context
 
