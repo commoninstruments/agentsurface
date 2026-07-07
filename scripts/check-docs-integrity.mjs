@@ -253,6 +253,7 @@ const FAST_DECAY = [
   "agents/anthropic-platform",
   "agents/runtime-guardrails",
   "agents/sandboxes-and-workspaces",
+  "cookbook/code-execution",
   "testing/observability",
   "testing/promptfoo",
   "authentication/auth-md",
