@@ -1,11 +1,11 @@
 ---
 title: Agent Memory Patterns
-description: The four types of agent memory, how to implement each, and how to share state between agents in a multi-agent system
+description: The five types of agent memory, how to implement each, and how to share state between agents in a multi-agent system
 ---
 
 ## Summary
 
-Four types of memory address different needs: message history (current thread), working memory (per-session key-value), semantic recall (long-term embeddings), and observational memory (compressed background facts). Most systems need all four; relying only on message history caps performance at context window size.
+Five types of memory address different needs: message history (current thread), working memory (per-session key-value), semantic recall (long-term embeddings), observational memory (compressed background facts), and procedural memory (learned how-to knowledge promoted into standing instructions). Most systems need at least the first four; relying only on message history caps performance at context window size.
 
 | Memory Type     | Scope                 | Example                                |
 | --------------- | --------------------- | -------------------------------------- |
@@ -13,15 +13,17 @@ Four types of memory address different needs: message history (current thread), 
 | Working Memory  | Per-session           | "customer_id": "cust_abc123"           |
 | Semantic Recall | Cross-thread, months  | Vector search for "similar past issue" |
 | Observational   | Compressed background | "This customer churn-risk: high"       |
+| Procedural      | Learned behavior      | "Always confirm scope before refunds"  |
 
 - Message history: trim by token budget or summarize when exceeding threshold
 - Working memory: structured key-value store for session state
 - Semantic recall: vector embeddings + similarity search for long-term facts
 - Observational: background agent that compresses insights into summaries
+- Procedural: reflection promotes repeated successes into reusable instructions
 
-Agent memory is not a single thing. The term covers at least four distinct mechanisms with different scopes, persistence characteristics, and implementation requirements. A system that relies only on message history is limited to what fits in a context window. A system with all four types can recall facts from months ago, maintain persistent user preferences, and surface relevant prior work without reprocessing everything.
+Agent memory is not a single thing. The term covers at least five distinct mechanisms with different scopes, persistence characteristics, and implementation requirements. A system that relies only on message history is limited to what fits in a context window. A system with all five types can recall facts from months ago, maintain persistent user preferences, surface relevant prior work without reprocessing everything, and improve its own procedures as it accumulates experience.
 
-## The Four Types
+## The Five Types
 
 | Type                 | Scope                   | Storage                  | Retrieval               |
 | -------------------- | ----------------------- | ------------------------ | ----------------------- |
@@ -29,6 +31,7 @@ Agent memory is not a single thing. The term covers at least four distinct mecha
 | Working Memory       | Per-session, per-agent  | Structured store         | Direct key access       |
 | Semantic Recall      | Cross-thread, long-term | Vector database          | Embedding similarity    |
 | Observational Memory | Background compression  | Structured store         | Direct key access       |
+| Procedural Memory    | Learned behavior        | Instruction store        | Loaded into context     |
 
 Each type solves a different problem. They are not interchangeable.
 
@@ -339,33 +342,78 @@ Observational memory compresses old message history in the background. As messag
 
 The process runs asynchronously: the agent continues operating normally while a background process periodically compresses old messages into summaries.
 
-### Mastra Background Memory Compression
+### Background Memory Compression (Conceptual Shape)
+
+`lastMessages` and `semanticRecall` below are real Mastra `Memory` options. Background compression itself is not a single named framework API — some systems expose it as a policy, others leave it to a custom background job — so treat the `compressionPolicy` block as an illustrative pseudo-config for the pattern, not a literal constructor option to copy verbatim.
 
 ```typescript
-import { Memory } from "@mastra/memory";
-import { openai } from "@ai-sdk/openai";
-
-const memory = new Memory({
-  options: {
-    lastMessages: 20, // keep the 20 most recent messages verbatim
-    semanticRecall: {
-      enabled: true,
-      topK: 3,
-    },
-    // Background compression of messages older than lastMessages threshold
-    compressionPolicy: {
-      enabled: true,
-      model: openai("gpt-5.4"),
-      prompt: `Summarize the key information from this conversation segment.
-        Preserve: decisions made, facts established, user preferences stated.
-        Discard: pleasantries, repeated requests, unsuccessful attempts.
-        Format as bullet points.`,
-    },
+// Illustrative pseudo-config: lastMessages + semanticRecall are real Mastra
+// Memory options; compressionPolicy sketches the background-compression pattern.
+const memoryConfig = {
+  lastMessages: 20, // keep the 20 most recent messages verbatim
+  semanticRecall: {
+    enabled: true,
+    topK: 3,
   },
-});
+  // Pattern, not a pinned API: compress messages older than the lastMessages
+  // threshold into structured summaries via a background job.
+  compressionPolicy: {
+    enabled: true,
+    model: "gpt-5.4",
+    prompt: `Summarize the key information from this conversation segment.
+      Preserve: decisions made, facts established, user preferences stated.
+      Discard: pleasantries, repeated requests, unsuccessful attempts.
+      Format as bullet points.`,
+  },
+};
 ```
 
 When the thread's message count exceeds `lastMessages`, older messages are compressed into structured summaries and stored separately. On future turns, both the recent messages (verbatim) and the older summaries (compressed) contribute to the agent's context.
+
+## 5. Procedural Memory
+
+The first four types store what the agent _knows_ — the conversation, session state, past facts, compressed background. Procedural memory stores what the agent has _learned to do_: how-to knowledge accumulated from experience. It is the difference between remembering that a refund happened (episodic/observational), knowing that refunds require a manager code (semantic fact), and having internalized the standing instruction "always confirm the refund scope with the user before issuing" because prior runs that skipped it went wrong.
+
+This is now an industry-converged category. Letta, Zep, Mem0, and LangMem each ship a distinct procedural (or "instruction") memory type alongside their semantic and episodic stores. Its file-based cousin is the skill library: `SKILL.md`-style documents that capture a repeatable procedure once and load it on demand. Both are the same idea — durable, reusable behavior separated from the transient conversation.
+
+### What It Stores
+
+Procedural memory holds generalized instructions rather than raw events or facts: refined system-prompt fragments, decision heuristics, tool-usage recipes, and guardrails that emerged from experience. Each entry is a small standing instruction ("prefer the bulk endpoint when updating more than 5 records"), not a transcript.
+
+### Write Path: Reflection Promotes Successes
+
+Procedural memory is written by reflection, not by direct capture. A background or end-of-task step reviews recent runs and promotes repeated successful patterns into instructions — and, ideally, demotes ones that led to failures. The write path is deliberately slow and selective: a single success should not become a rule; a pattern that holds across several runs should.
+
+```typescript
+// Illustrative pseudo-config: a reflection step distills durable instructions
+// from recent task outcomes and writes them to a procedural store.
+async function reflectAndPromote(agentId: string, recentRuns: TaskRun[]) {
+  const distilled = await reflectionModel.generate(`
+    Review these task outcomes. Identify patterns that succeeded across
+    multiple runs and are worth making into a standing instruction.
+    Output each as a single imperative rule, or "none" if nothing generalizes.
+
+    ${formatRuns(recentRuns)}
+  `);
+
+  for (const instruction of parseRules(distilled)) {
+    await proceduralStore.upsert({
+      agentId,
+      instruction, // e.g. "Confirm refund scope with the user before issuing"
+      supportCount: 1, // incremented when the same rule is re-derived
+      lastConfirmed: new Date().toISOString(),
+    });
+  }
+}
+```
+
+### Read Path: Loaded, Not Retrieved
+
+Unlike semantic recall — fetched per turn by similarity — procedural memory is usually _loaded into the system context_ at the start of a session, because standing instructions apply broadly rather than to a specific query. High-volume instruction sets can be scoped (by task type or tool) and retrieved selectively to control token cost, but the default is "always in context." This mirrors how a skill library injects the relevant `SKILL.md` up front.
+
+### Risks: Bad Habits Compound
+
+Procedural memory is the one type that changes the agent's behavior rather than just its knowledge, so its failure mode is worse. A wrongly promoted instruction becomes a bad habit that compounds — every future run inherits it, and reflection may even reinforce it. Mitigations: require multiple supporting runs before promotion, expire or decay instructions that stop being confirmed, keep the store small and human-auditable, and treat it as curated content rather than an append-only log. An unbounded procedural store degrades into contradictory guidance.
 
 ## Shared Memory Between Agents
 
@@ -427,12 +475,13 @@ security_findings = await shared_store.aget(
 
 ## Memory in Multi-Agent Systems: What to Isolate vs. Share
 
-| Memory type          | Share between agents?        | Rationale                                         |
-| -------------------- | ---------------------------- | ------------------------------------------------- |
-| Message history      | Only through shared threadId | Workers do not need full supervisor conversation  |
-| Working memory       | Per-agent                    | Agent-specific preferences and state              |
-| Semantic recall      | Share via resourceId         | Cross-thread recall benefits from full history    |
-| Task results (store) | Yes, with namespacing        | Sub-task outputs must be accessible to supervisor |
+| Memory type          | Share between agents?        | Rationale                                                             |
+| -------------------- | ---------------------------- | --------------------------------------------------------------------- |
+| Message history      | Only through shared threadId | Workers do not need full supervisor conversation                      |
+| Working memory       | Per-agent                    | Agent-specific preferences and state                                  |
+| Semantic recall      | Share via resourceId         | Cross-thread recall benefits from full history                        |
+| Procedural memory    | Per-role, curated            | Each agent role learns its own procedures; sharing spreads bad habits |
+| Task results (store) | Yes, with namespacing        | Sub-task outputs must be accessible to supervisor                     |
 
 <Callout type="info">
   The most common memory mistake in multi-agent systems is assuming all agents share a global memory

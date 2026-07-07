@@ -1,0 +1,73 @@
+---
+title: Agentic Commerce Protocols
+description: Foundation-backed protocols with real deployment for agent-initiated payments — UCP, AP2, and x402 — plus the honest status of ACP and the card-network schemes
+lastVerified: 2026-07-06
+---
+
+## Summary
+
+An agent that buys things needs explicit, verifiable, revocable spending authority, and the merchant on the other side needs to know the agent is authorized to spend on a specific user's behalf. Ad-hoc "card on file with the agent vendor" breaks both halves: the user cannot see or cap what the agent may spend, and the merchant cannot tell an authorized agent from a scripted bot replaying stored credentials. Agentic commerce protocols exist to make the spending boundary a first-class, signed object rather than an implicit trust relationship.
+
+This page covers only foundation-backed protocols that have real governance and real deployment. Vendor-branded schemes with no cross-vendor traction are out of scope — see the [emerging standards watchlist](/docs/protocols/emerging-standards) for those.
+
+- **UCP** — Google + Shopify; the current commerce center of gravity, thousands of live stores
+- **AP2** — Google-originated, now at the FIDO Alliance; the signed-mandate primitive, deployments still thin
+- **x402** — Coinbase-originated HTTP 402 payments, now a Linux Foundation project running at AWS and Cloudflare edge
+- **ACP** — covered honestly below as deflating; full page at [Agentic Commerce Protocol](/docs/protocols/acp)
+
+The common primitive across all of them is a **mandate**: a signed, scoped, revocable authorization that proves an agent may make a specific payment. Mandates are an instance of agent authorization generally — see [Agent Identity](/docs/authentication/agent-identity).
+
+## UCP — Universal Commerce Protocol
+
+**Status: current center of gravity.** UCP was announced by Google and Shopify on 2026-01-11 at NRF, with a date-versioned spec (`2026-01-11`) and 20+ launch partners. The UCP Tech Council expanded on 2026-04-24 to add Amazon, Meta, Microsoft, Salesforce, and Stripe. By mid-June a public tracker reported 8,000+ verified stores, and UCP is designed to be AP2-compatible so its mandates can ride the AP2 authorization model.
+
+UCP standardizes how a merchant catalog, cart, and checkout are exposed to agents and how a purchase is authorized end to end. It is where broad commerce momentum has concentrated after the ACP Instant Checkout retreat (below), which is why it is the first protocol to evaluate if you are a merchant deciding where to invest.
+
+If you sell through Shopify or one of the launch platforms, UCP is likely to reach you as a platform feature rather than something you implement by hand. Treat the store-count figure as tracker-sourced rather than an official number.
+
+## AP2 — Agent Payments Protocol
+
+**Status: strong governance, thin deployment.** AP2 is Google-originated with 60+ collaborators and was donated to the FIDO Alliance on 2026-04-28, together with Mastercard's Verifiable Intent work. The spec is at v0.2.0 and now includes "Human Not Present" flows for delegated purchases the user is not actively watching.
+
+AP2's core object is the **mandate**: a signed payment authorization that binds an agent, a user, an amount cap, and a scope into a single verifiable credential a merchant or payment network can check. This is the primitive UCP is compatible with and the reason AP2 matters even where it is not yet directly deployed.
+
+Be honest about maturity: AP2 has serious backing and a clean model, but production deployments are still thin. Adopt the mandate concept now; pin a hard dependency on AP2 endpoints only once your payment partner ships concrete support.
+
+## x402 — HTTP 402 Payments
+
+**Status: infrastructure-real.** x402 revives the long-dormant HTTP `402 Payment Required` status code as an actual payment-negotiation mechanism. It originated at Coinbase and moved under the Linux Foundation as the x402 Foundation in April 2026, with members including AWS, Cloudflare, Anthropic, and Circle.
+
+Unlike UCP and AP2, x402 already runs in production infrastructure: Cloudflare and AWS both operate x402 stablecoin micropayments at the edge, letting a server answer a request with `402` plus payment terms and accept an on-chain settlement inline. Coinbase self-reports roughly 169M payments to date — attribute that figure to Coinbase rather than treating it as independently verified.
+
+x402 fits a different shape than the cart-and-checkout protocols: it is for per-request, machine-to-machine settlement (paying for an API call, a piece of content, a compute unit) rather than consumer retail checkout. If your surface is a metered API or agent-callable resource, x402 is the relevant protocol.
+
+## ACP — Agentic Commerce Protocol (Status)
+
+ACP (OpenAI + Stripe) is Beta and deflating. OpenAI shut down ChatGPT Instant Checkout in March 2026, and broad commerce momentum has moved to UCP. It is a real, documented protocol with an MCP binding, but it now reads as a narrowing pilot rather than a converging standard. The full treatment lives at [Agentic Commerce Protocol (ACP)](/docs/protocols/acp); it is covered there rather than expanded here because it is contracting, not growing.
+
+## Decision Rule: Which Protocol by Role
+
+Which protocol matters depends on your role, and for two of the three the honest guidance today is watch, not build.
+
+- **Merchant / commerce platform** — UCP is the one to track and, where your platform offers it, enable. It is where store adoption is concentrating. Do not hand-build a competing checkout surface; ride the platform integration.
+- **Agent platform** — Adopt the **mandate** model (AP2-style signed intent) as your internal representation of spending authority now, because every serious protocol converges on it. Defer pinning to a specific protocol's wire format until your payment partner commits.
+- **Payments / API infrastructure** — x402 is buildable today for per-request settlement, especially if you already run at an edge that supports it (Cloudflare, AWS). For consumer retail flows, watch UCP/AP2 rather than building ahead of your acquirer.
+
+The recurring "watch, don't build" note is deliberate: outside x402's infrastructure niche, the standards are governed but young, and building against a v0.2.0 spec or a tracker-sourced store count is premature for anything mission-critical.
+
+## Mandates: The Common Primitive
+
+Every protocol here reduces to the same object: a **mandate** — a signed, amount-capped, merchant-scoped, revocable authorization that proves an agent may make a specific payment on a specific user's behalf. AP2 makes it explicit; UCP is compatible with it; x402's inline payment terms are a machine-to-machine variant of the same idea; even ACP's payment-delegation challenge is a mandate in all but name.
+
+This is why agentic commerce is not really a payments problem — it is an agent-authorization problem. A mandate is a specialization of the general pattern in [Agent Identity](/docs/authentication/agent-identity): scoped, delegated, auditable authority that a downstream service can verify without trusting the caller's self-description. Design your spending authority as verifiable signed intent, and the specific protocol becomes a serialization detail.
+
+## Card-Network Protocols (Not Covered Here)
+
+The card networks are publishing their own agent-payment schemes — Visa Trusted Agent Protocol and Mastercard Agent Pay — but these are branded, single-network efforts without cross-vendor governance, so they are tracked as one-liners on the [emerging standards watchlist](/docs/protocols/emerging-standards) rather than covered here.
+
+## Related Pages
+
+- [Agentic Commerce Protocol (ACP)](/docs/protocols/acp) — full page on the OpenAI + Stripe protocol
+- [Agent Identity](/docs/authentication/agent-identity) — mandates as an instance of scoped, signed agent authorization
+- [Emerging Standards Watchlist](/docs/protocols/emerging-standards) — card-network payment schemes and other early-stage protocols
+- [Protocol Comparison](/docs/protocols/comparison) — when to use MCP, A2A, and ACP

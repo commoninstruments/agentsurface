@@ -1,6 +1,7 @@
 ---
 title: Agent Identity
 description: First-class agent principals, audit trails, and the actor chain
+lastVerified: 2026-07-06
 ---
 
 ## Summary
@@ -169,6 +170,16 @@ curl -H "Authorization: Bearer ..." \
 ```
 
 Any client can set this header. Use it only for non-security purposes: returning structured error responses, suppressing interactive UI elements, adjusting rate limits. For identity claims, use the JWT.
+
+## Payment Mandates
+
+A payment mandate is a specialization of agent identity. Instead of proving _who_ the agent is, it proves the agent is _authorized to make a specific payment_ on a user's behalf. AP2-style signed intent binds an agent, a user, an amount cap, and a merchant scope into a single verifiable credential — the same scoped, delegated, auditable pattern as the actor chain above, applied to spending authority rather than API access. The token-narrowing and `act`-claim machinery on this page is what a mandate specializes: authority that a downstream merchant or payment network can verify without trusting the caller's self-description. See [Agentic Commerce Protocols](/docs/protocols/agentic-commerce) for how UCP, AP2, and x402 serialize this primitive.
+
+## Web Bot Auth
+
+The identity mechanisms above are token-based: the agent presents a JWT it obtained through OAuth. Web Bot Auth addresses a different layer — proving that inbound HTTP traffic comes from an accountable bot at the request level, before any application token is checked. The IETF WebBotAuth working group is chartered, building on RFC 9421 HTTP Message Signatures so an agent can cryptographically sign its requests and a receiving site can distinguish it from anonymous automation. Cloudflare has run it in production since March 2026, folded into its Verified Bots program.
+
+Be honest about the gap: the server-side verification capability is real and deployed, but client-side adoption by major agent vendors is still largely undocumented, so the request-signing half of the ecosystem is unproven. Treat Web Bot Auth as a way to admit "good bots" through bot-management controls rather than as a settled identity standard. See [robots.txt for AI Agents](/docs/discovery/robots-txt) for the bot-verification context and [Well-Known Endpoints](/docs/discovery/well-known-endpoints) for the signatures directory that publishes verification keys.
 
 ## Checklist
 
