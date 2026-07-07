@@ -126,6 +126,29 @@ jobs:
           fi
 ```
 
+## Pin the dataset version
+
+A baseline-vs-current comparison is only valid if both runs evaluated the same dataset version. If the dataset changed between the baseline run and the PR run, the delta conflates two causes — the code change and the dataset change — and the gate becomes noise. Pin the version per run, record it in the results, and fail fast when a run is unpinned or the two versions disagree.
+
+```bash
+# Fail the job before interpreting any delta if versions do not match
+BASELINE_VERSION=$(jq -r '.datasetVersion // "unpinned"' baseline.json)
+CURRENT_VERSION=$(jq -r '.datasetVersion // "unpinned"' current.json)
+
+if [ "$CURRENT_VERSION" = "unpinned" ]; then
+  echo "Eval ran against an unpinned dataset. Refusing to gate on it."
+  exit 1
+fi
+
+if [ "$BASELINE_VERSION" != "$CURRENT_VERSION" ]; then
+  echo "Dataset version mismatch: baseline=$BASELINE_VERSION current=$CURRENT_VERSION"
+  echo "A dataset change is not a regression. Rebaseline before comparing."
+  exit 1
+fi
+```
+
+Deciding _what_ goes into that versioned dataset — sourcing, labeling, leakage checks, and re-sampling as production drifts — is covered in [Datasets and experiments](/docs/testing/datasets-and-experiments).
+
 ## Statistical significance
 
 A single regression is noise. Use statistical tests to distinguish signal from noise.
@@ -349,6 +372,7 @@ if (costDelta > 20) {
 
 ## See also
 
+- `/docs/testing/datasets-and-experiments` — curating and versioning the dataset these gates compare against
 - `/docs/testing/metrics` — pass@k, F1, cost metrics
 - `/docs/testing/promptfoo` — CI-friendly YAML configs
 - `/docs/testing/vitest-harness` — fast deterministic tests

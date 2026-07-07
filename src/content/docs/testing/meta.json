@@ -4,6 +4,7 @@
     "index",
     "evaluation-framework",
     "metrics",
+    "datasets-and-experiments",
     "llm-as-judge",
     "vitest-harness",
     "promptfoo",

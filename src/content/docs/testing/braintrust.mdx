@@ -109,6 +109,8 @@ await dataset.insert([
 // New evals can target 2025-04-18
 ```
 
+For how to decide _what belongs_ in these versioned datasets — sourcing, labeling, leakage checks, and drift detection — see [Datasets and experiments](/docs/testing/datasets-and-experiments). This page covers the platform mechanics; that page covers the curation methodology.
+
 ## Experiment tracking
 
 Experiments are automatically tracked in Braintrust. Compare metrics across versions:
@@ -160,6 +162,40 @@ async function compareModels() {
   // Braintrust web UI shows: Haiku 0.72 → Opus 0.89 (+17%)
 }
 ```
+
+### Pinning experiments to a dataset version
+
+A comparison between two experiments only means something if both ran against the same dataset version. Pin the version explicitly and record it on the experiment so a score delta reflects the model or prompt change, not a dataset that shifted underneath the runs.
+
+```typescript
+async function comparePinnedToBaseline() {
+  // Pin the exact dataset version both runs evaluate against
+  const dataset = await Braintrust.getDataset("summarize_tasks", {
+    version: "2025-04-18",
+  });
+
+  const candidate = await Braintrust.eval({
+    projectName: "agent_summarize",
+    experimentName: "opus-prompt-v2",
+    // Diff this run against a named baseline experiment
+    baseExperimentName: "opus-prompt-v1",
+    metadata: {
+      model: "claude-opus-4-8",
+      promptVersion: "v2",
+      datasetVersion: "2025-04-18", // provenance: reproducible later
+    },
+    data: () => dataset.fetch(),
+    task: async (input) => agent.summarize(input.text),
+    scores: { quality: scoreQuality },
+  });
+
+  // Braintrust diffs opus-prompt-v2 against opus-prompt-v1 case-by-case:
+  // per-case regressions, improvements, and the aggregate delta
+  console.log(candidate.summary.comparison);
+}
+```
+
+If the baseline and candidate resolve to different dataset versions, the diff is meaningless — gate on a version match before trusting the delta.
 
 ## Human review integration
 
@@ -274,6 +310,7 @@ jobs:
 
 ## See also
 
+- `/docs/testing/datasets-and-experiments` — golden-dataset curation methodology behind these versioned datasets
 - `/docs/testing/evaluation-framework` — grader patterns
 - `/docs/testing/ci-integration` — running evals in GitHub Actions
 - `/docs/testing/observability` — trace-driven debugging
