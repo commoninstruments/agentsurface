@@ -96,7 +96,7 @@ function GlossaryOverlay({ term, onClose }: { term: GlossaryTerm; onClose: () =>
     <>
       <motion.div
         key="backdrop"
-        className="fixed inset-0 z-[100] bg-white/55 backdrop-blur-xl dark:bg-zinc-950/65"
+        className="fixed inset-0 z-[100] bg-white/55 backdrop-blur-xl dark:bg-fd-background/70"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -107,7 +107,7 @@ function GlossaryOverlay({ term, onClose }: { term: GlossaryTerm; onClose: () =>
       <div className="pointer-events-none fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-8">
         <motion.div
           layoutId={`card-${term.id}`}
-          className="pointer-events-auto w-full max-w-md overflow-hidden rounded-2xl border border-white/50 bg-white/85 backdrop-blur-2xl dark:border-zinc-700/40 dark:bg-zinc-900/90"
+          className="pointer-events-auto w-full max-w-md overflow-hidden rounded-2xl border border-white/50 bg-white/85 backdrop-blur-2xl dark:border-fd-border/60 dark:bg-fd-card/90"
           style={{
             WebkitBackdropFilter: "blur(40px)",
             boxShadow: "0 40px 100px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)",
@@ -115,7 +115,7 @@ function GlossaryOverlay({ term, onClose }: { term: GlossaryTerm; onClose: () =>
           transition={SPRING}
         >
           {/* Pattern banner */}
-          <div className="relative h-40 overflow-hidden bg-white text-fd-foreground dark:bg-zinc-900 dark:text-zinc-300">
+          <div className="relative h-40 overflow-hidden bg-white text-fd-foreground dark:bg-fd-card dark:text-fd-muted-foreground">
             <CardPattern category={term.category} />
             <motion.button
               onClick={onClose}

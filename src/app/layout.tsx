@@ -58,8 +58,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#fbfbf9" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#161614" media="(prefers-color-scheme: dark)" />
         <link href="https://rsms.me/" rel="preconnect" />
         <link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
         <script
